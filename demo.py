@@ -45,8 +45,24 @@ class App:
         pygame.draw.rect(surface=canvas, color=(34, 139, 34), rect=(pos[0], pos[1], self.gridWidth, self.gridHeight))
         self.drawBorder(canvas, pos)
 
+    def drawBrick(self, canvas, pos):
+        pygame.draw.rect(surface=canvas, color=(0, 0, 255), rect=(pos[0], pos[1], self.gridWidth, self.gridHeight))
+        self.drawBorder(canvas, pos)
+
     def drawPlayer(self, canvas, pos):
         pygame.draw.rect(surface=canvas, color=(0, 0, 255), rect=(pos[0], pos[1], self.gridWidth, self.gridHeight))
+        self.drawBorder(canvas, pos)
+
+    def drawBomb(self, canvas, pos, time):
+        bombCenter = (pos[0] + self.gridWidth / 2, pos[1] + self.gridHeight / 2)
+        if time >= 30:
+            bombRadius = 1 * (self.gridWidth // 3) / 2
+        elif time >= 15:
+            bombRadius = 2 * (self.gridWidth // 3) / 2
+        elif time >= 0:
+            bombRadius = 3 * (self.gridWidth // 3) / 2
+        self.drawFloor(canvas, pos)
+        pygame.draw.circle(canvas, color=(0, 0, 0), center=bombCenter, radius=bombRadius)
         self.drawBorder(canvas, pos)
 
     def draw(self, canvas):
@@ -58,14 +74,27 @@ class App:
                     self.drawFloor(canvas, self.getPosition(row, col))
                 elif self.board[row][col] == "p":
                     self.drawPlayer(canvas, self.getPosition(row, col))
+                elif isinstance(self.board[row][col], int):
+                    self.detonateBomb(row, col)
+                    self.drawBomb(canvas, self.getPosition(row, col), self.board[row][col])
 
     def movePlayer(self, direction):
         currRow, currCol = self.playerCell[0], self.playerCell[1]
         tempRow, tempCol = (currRow + direction[0], currCol + direction[1])
         if self.board[tempRow][tempCol] == "f":
-            self.board[currRow][currCol] = "f"
+            # if Bomb is placed, no need to draw floor again
+            if self.board[currRow][currCol] == "p":
+                self.board[currRow][currCol] = "f"
             self.board[tempRow][tempCol] = "p"
             self.playerCell = (tempRow, tempCol)
+
+    def placeBomb(self):
+        currRow, currCol = self.playerCell[0], self.playerCell[1]
+        self.board[currRow][currCol] = 45
+
+    def detonateBomb(self, row, col):
+        if self.board[row][col] > 0:
+            self.board[row][col] -= 1
 
     def update(self):
         keyPressed = pygame.key.get_pressed()
@@ -77,6 +106,8 @@ class App:
             self.movePlayer(direction=(+1, 0))
         elif keyPressed[pygame.K_UP]:
             self.movePlayer(direction=(-1, 0))
+        elif keyPressed[pygame.K_SPACE]:
+            self.placeBomb()
 
 
 def appStarted():
