@@ -9,6 +9,7 @@ Below is a list containing all entities used in BomBot.
 ### Board
 
 - stores position of everything fixed
+- "w" for wall, "p" for player, "f" for floor
 
 ### Player
 
@@ -21,6 +22,10 @@ Below is a list containing all entities used in BomBot.
 ### Wall
 
 - non-destructible
+
+### Floor
+
+- where everything sits on
 
 ### Bot
 
