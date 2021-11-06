@@ -11,7 +11,7 @@ Below is a list containing all entities used in BomBot.
 - stores position of everything fixed
 - "w" for wall, "p" for player, "f" for floor
 
-### Player
+### Robot
 
 - is controlled by the user
 
@@ -27,7 +27,7 @@ Below is a list containing all entities used in BomBot.
 
 - where everything sits on
 
-### Bot
+### Enemy
 
 - behaves like a user
 
