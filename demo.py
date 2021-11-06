@@ -1,6 +1,5 @@
 import pygame
 
-
 class App:
     def __init__(self):
         # specify dimensions used in display
@@ -31,7 +30,7 @@ class App:
         x0, y0 = pos
         x1, y1 = x0 + self.gridWidth, y0
         x2, y2 = x1, y1 + self.gridHeight
-        x3, y3 = x2 - self.gridWidth,  y2
+        x3, y3 = x2 - self.gridWidth, y2
         pygame.draw.line(canvas, (0, 0, 0), (x0, y0), (x3, y3), width=5)
         pygame.draw.line(canvas, (0, 0, 0), (x0, y0), (x1, y1), width=5)
         pygame.draw.line(canvas, (0, 0, 0), (x1, y1), (x2, y2), width=5)
@@ -65,6 +64,48 @@ class App:
         pygame.draw.circle(canvas, color=(0, 0, 0), center=bombCenter, radius=bombRadius)
         self.drawBorder(canvas, pos)
 
+    def drawExplosion(self, canvas, row, col):
+        leftRange = [(0, 0), (0, -1), (0, -2)]
+        rightRange = [(0, +1), (0, +2)]
+        downRange = [(+1, 0), (+2, 0)]
+        upRange = [(-1, 0), (-2, 0)]
+        for dRow, dCol in rightRange:
+            if (0 <= row + dRow < len(self.board)) and (0 <= col + dCol < len(self.board[0])) and \
+                    self.board[row + dRow][col + dCol] != "w":
+                pos = self.getPosition(row + dRow, col + dCol)
+                pygame.draw.rect(surface=canvas, color=(255, 0, 0),
+                                 rect=(pos[0], pos[1], self.gridWidth, self.gridHeight))
+                self.drawBorder(canvas, pos)
+            else:
+                break
+        for dRow, dCol in leftRange:
+            if (0 <= row + dRow < len(self.board)) and (0 <= col + dCol < len(self.board[0])) and \
+                    self.board[row + dRow][col + dCol] != "w":
+                pos = self.getPosition(row + dRow, col + dCol)
+                pygame.draw.rect(surface=canvas, color=(255, 0, 0),
+                                 rect=(pos[0], pos[1], self.gridWidth, self.gridHeight))
+                self.drawBorder(canvas, pos)
+            else:
+                break
+        for dRow, dCol in downRange:
+            if (0 <= row + dRow < len(self.board)) and (0 <= col + dCol < len(self.board[0])) and \
+                    self.board[row + dRow][col + dCol] != "w":
+                pos = self.getPosition(row + dRow, col + dCol)
+                pygame.draw.rect(surface=canvas, color=(255, 0, 0),
+                                 rect=(pos[0], pos[1], self.gridWidth, self.gridHeight))
+                self.drawBorder(canvas, pos)
+            else:
+                break
+        for dRow, dCol in upRange:
+            if (0 <= row + dRow < len(self.board)) and (0 <= col + dCol < len(self.board[0])) and \
+                    self.board[row + dRow][col + dCol] != "w":
+                pos = self.getPosition(row + dRow, col + dCol)
+                pygame.draw.rect(surface=canvas, color=(255, 0, 0),
+                                 rect=(pos[0], pos[1], self.gridWidth, self.gridHeight))
+                self.drawBorder(canvas, pos)
+            else:
+                break
+
     def draw(self, canvas):
         for row in range(len(self.board)):
             for col in range(len(self.board[0])):
@@ -75,8 +116,12 @@ class App:
                 elif self.board[row][col] == "p":
                     self.drawPlayer(canvas, self.getPosition(row, col))
                 elif isinstance(self.board[row][col], int):
-                    self.detonateBomb(row, col)
-                    self.drawBomb(canvas, self.getPosition(row, col), self.board[row][col])
+                    if self.board[row][col] > 0:
+                        self.detonateBomb(row, col)
+                        self.drawBomb(canvas, self.getPosition(row, col), self.board[row][col])
+                    else:
+                        self.detonateBomb(row, col)
+                        self.drawExplosion(canvas, row, col)
 
     def movePlayer(self, direction):
         currRow, currCol = self.playerCell[0], self.playerCell[1]
@@ -95,6 +140,10 @@ class App:
     def detonateBomb(self, row, col):
         if self.board[row][col] > 0:
             self.board[row][col] -= 1
+        elif self.board[row][col] >= -15:
+            self.board[row][col] -= 1
+        else:
+            self.board[row][col] = "f"
 
     def update(self):
         keyPressed = pygame.key.get_pressed()
