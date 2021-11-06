@@ -13,13 +13,14 @@ class Bomb:
     def __init__(self, position):
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/bomb.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
-        self.time = 1500
+        self.time = 1000
 
 
 class Robot:
     def __init__(self):
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/robot.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect()
+        self.numBomb = 1
         self.bomb = []
 
     def move(self):
@@ -35,12 +36,15 @@ class Robot:
 
     def placeBomb(self):
         keyPressed = pygame.key.get_pressed()
-        if keyPressed[pygame.K_SPACE]:
+        if keyPressed[pygame.K_SPACE] and self.numBomb:
             self.bomb.append(Bomb(self.rect.center))
+            self.numBomb -= 1
 
     def detonateBomb(self):
         for b in self.bomb:
-            if b.time == 0: self.bomb.remove(b)
+            if b.time == 0:
+                self.bomb.remove(b)
+                self.numBomb += 1
             else: b.time -= 1
 
     def update(self):
@@ -86,7 +90,6 @@ def updateObject(app):
 
 def updateCanvas(app, canvas):
     app.draw(canvas)
-    pygame.time.Clock().tick()
     pygame.display.flip()
 
 
