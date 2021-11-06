@@ -16,6 +16,13 @@ class Bomb:
         self.time = 1000
 
 
+class Explosion:
+    def __init__(self, position):
+        self.image = pygame.transform.scale(pygame.image.load("./asset/image/explosion.png").convert_alpha(), (70, 70))
+        self.rect = self.image.get_rect(center=position)
+        self.time = 1000
+
+
 class Robot:
     def __init__(self):
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/robot.png").convert_alpha(), (70, 70))
