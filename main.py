@@ -20,7 +20,7 @@ class Explosion:
     def __init__(self, position):
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/explosion.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
-        self.time = 1000
+        self.time = 500
 
 
 class Robot:
@@ -29,6 +29,9 @@ class Robot:
         self.rect = self.image.get_rect()
         self.numBomb = 1
         self.bomb = []
+        self.explosion = []
+        self.explosionDirection = [(-70 * 1, 0), (-70 * 2, 0), (+70 * 1, 0), (+70 * 2, 0),
+                                   (0, -70 * 1), (0, -70 * 2), (0, +70 * 1), (0, +70 * 2), (0, 0)]
 
     def move(self):
         keyPressed = pygame.key.get_pressed()
@@ -47,21 +50,33 @@ class Robot:
             self.bomb.append(Bomb(self.rect.center))
             self.numBomb -= 1
 
-    def detonateBomb(self):
+    def timeBomb(self):
         for b in self.bomb:
             if b.time == 0:
+                for dX, dY in self.explosionDirection:
+                    cX, cY = b.rect.center[0] + dX, b.rect.center[1] + dY
+                    self.explosion.append(Explosion((cX, cY)))
                 self.bomb.remove(b)
                 self.numBomb += 1
             else: b.time -= 1
 
+    def timeExplosion(self):
+        for e in self.explosion:
+            if e.time == 0:
+                self.explosion.remove(e)
+            else: e.time -= 1
+
     def update(self):
         self.move()
         self.placeBomb()
-        self.detonateBomb()
+        self.timeBomb()
+        self.timeExplosion()
 
     def draw(self, canvas):
         for b in self.bomb:
             canvas.blit(b.image, b.rect)
+        for e in self.explosion:
+            canvas.blit(e.image, e.rect)
         canvas.blit(self.image, self.rect)
 
 
