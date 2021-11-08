@@ -1,26 +1,8 @@
 import pygame
-
-
-class Board:
-    def __init__(self):
-        pass
-
-    def draw(self, canvas):
-        canvas.fill((0, 0, 0))
-
-
-class Bomb:
-    def __init__(self, position):
-        self.image = pygame.transform.scale(pygame.image.load("./asset/image/bomb.png").convert_alpha(), (70, 70))
-        self.rect = self.image.get_rect(center=position)
-        self.time = 1000
-
-
-class Explosion:
-    def __init__(self, position):
-        self.image = pygame.transform.scale(pygame.image.load("./asset/image/explosion.png").convert_alpha(), (70, 70))
-        self.rect = self.image.get_rect(center=position)
-        self.time = 500
+from asset.sprite.board import Board
+from asset.sprite.bomb import Bomb
+from asset.sprite.explosion import Explosion
+from asset.sprite.over import Over
 
 
 class Robot:
@@ -85,15 +67,6 @@ class Robot:
             canvas.blit(b.image, b.rect)
         for e in self.explosion:
             canvas.blit(e.image, e.rect)
-        canvas.blit(self.image, self.rect)
-
-
-class Over:
-    def __init__(self):
-        self.image = pygame.image.load("./asset/image/game-over.png").convert_alpha()
-        self.rect = self.image.get_rect()
-
-    def draw(self, canvas):
         canvas.blit(self.image, self.rect)
 
 
