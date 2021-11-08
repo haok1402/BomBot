@@ -32,6 +32,7 @@ class Robot:
         self.explosion = []
         self.explosionDirection = [(-70 * 1, 0), (-70 * 2, 0), (+70 * 1, 0), (+70 * 2, 0),
                                    (0, -70 * 1), (0, -70 * 2), (0, +70 * 1), (0, +70 * 2), (0, 0)]
+        self.isAlive = True
 
     def move(self):
         keyPressed = pygame.key.get_pressed()
@@ -62,13 +63,20 @@ class Robot:
 
     def timeExplosion(self):
         for e in self.explosion:
-            if e.time == 0:
-                self.explosion.remove(e)
+            if e.time == 0: self.explosion.remove(e)
             else: e.time -= 1
 
+    def doKill(self):
+        cx, cy = self.rect.center
+        for e in self.explosion:
+            (x0, y0), (x1, y1) = e.rect.topleft, e.rect.bottomright
+            if (x0 <= cx <= x1) and (y0 <= cy <= y1): self.isAlive = False
+
     def update(self):
-        self.move()
-        self.placeBomb()
+        if self.isAlive:
+            self.move()
+            self.placeBomb()
+            self.doKill()
         self.timeBomb()
         self.timeExplosion()
 
