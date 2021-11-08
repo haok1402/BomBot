@@ -88,10 +88,20 @@ class Robot:
         canvas.blit(self.image, self.rect)
 
 
+class Over:
+    def __init__(self):
+        self.image = pygame.image.load("./asset/image/game-over.png").convert_alpha()
+        self.rect = self.image.get_rect()
+
+    def draw(self, canvas):
+        canvas.blit(self.image, self.rect)
+
+
 class App:
     def __init__(self):
         self.board = Board()
         self.robot = Robot()
+        self.over = Over()
 
     def update(self):
         self.robot.update()
@@ -99,6 +109,7 @@ class App:
     def draw(self, canvas):
         self.board.draw(canvas)
         self.robot.draw(canvas)
+        if not self.robot.isAlive: self.over.draw(canvas)
 
 
 def captureEvent():
