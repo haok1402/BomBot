@@ -10,22 +10,22 @@ class Wall:
 class Board:
     def __init__(self, row, col):
         self.row, self.col = row, col
-        # left=310, right=1780, gridWidth=70; top=15, bottom=1065, gridHeight=70;
-        self.position = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
-        self.object = [[None for r in range(self.col)] for c in range(self.row)]
+        # left=310, right=1780, gridWidth=70; top=15, bottom=1065, gridHeight=70; row=15, col=21;
+        self.positionTable = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
+        self.objectTable = [[None for r in range(self.col)] for c in range(self.row)]
         self.createBoard()
 
     def createBoard(self):
         for r in range(self.row):
             for c in range(self.col):
-                if r == 0 or r == self.row - 1: self.object[r][c] = Wall(self.position[r][c])
-                if c == 0 or c == self.col - 1: self.object[r][c] = Wall(self.position[r][c])
+                if r == 0 or r == self.row - 1: self.objectTable[r][c] = Wall(self.positionTable[r][c])
+                if c == 0 or c == self.col - 1: self.objectTable[r][c] = Wall(self.positionTable[r][c])
 
     def draw(self, canvas):
         canvas.fill((0, 0, 0))
         for r in range(self.row):
             for c in range(self.col):
-                if self.object[r][c]: canvas.blit(self.object[r][c].image, self.object[r][c].rect)
+                if self.objectTable[r][c]: canvas.blit(self.objectTable[r][c].image, self.objectTable[r][c].rect)
 
 
 class Bomb:
@@ -61,6 +61,7 @@ class Robot:
         self.explosionDirection = [(-70 * 1, 0), (-70 * 2, 0), (+70 * 1, 0), (+70 * 2, 0),
                                    (0, -70 * 1), (0, -70 * 2), (0, +70 * 1), (0, +70 * 2), (0, 0)]
         self.isAlive = True
+        self.positionTable = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
 
     def move(self):
         keyPressed = pygame.key.get_pressed()
@@ -76,7 +77,9 @@ class Robot:
     def placeBomb(self):
         keyPressed = pygame.key.get_pressed()
         if keyPressed[pygame.K_SPACE] and self.numBomb:
-            self.bomb.append(Bomb(self.rect.center))
+            # fix robot(x, y) to bomb(r, c)
+            r, c = (self.rect.centery - 15) // 70, (self.rect.centerx - 310) // 70
+            self.bomb.append(Bomb(self.positionTable[r][c]))
             self.numBomb -= 1
 
     def timeBomb(self):
@@ -122,7 +125,7 @@ class Robot:
 class App:
     def __init__(self):
         self.board = Board(15, 21)
-        self.robot = Robot(self.board.position[1][1])
+        self.robot = Robot(self.board.positionTable[1][1])
         self.over = Over()
 
     def update(self):
