@@ -45,16 +45,16 @@ class Explosion:
 class Over:
     def __init__(self):
         self.image = pygame.image.load("./asset/image/game-over.png").convert_alpha()
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(topleft=(310, 15))
 
     def draw(self, canvas):
         canvas.blit(self.image, self.rect)
 
 
 class Robot:
-    def __init__(self):
+    def __init__(self, position):
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/robot.png").convert_alpha(), (70, 70))
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(center=position)
         self.numBomb = 1
         self.bomb = []
         self.explosion = []
@@ -122,7 +122,7 @@ class Robot:
 class App:
     def __init__(self):
         self.board = Board(15, 21)
-        self.robot = Robot()
+        self.robot = Robot(self.board.position[1][1])
         self.over = Over()
 
     def update(self):
