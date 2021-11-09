@@ -1,8 +1,35 @@
 import pygame
-from asset.sprite.board import Board
-from asset.sprite.bomb import Bomb
-from asset.sprite.explosion import Explosion
-from asset.sprite.over import Over
+
+
+class Board:
+    def __init__(self):
+        pass
+
+    def draw(self, canvas):
+        canvas.fill((0, 0, 0))
+
+
+class Bomb:
+    def __init__(self, position):
+        self.image = pygame.transform.scale(pygame.image.load("./asset/image/bomb.png").convert_alpha(), (70, 70))
+        self.rect = self.image.get_rect(center=position)
+        self.time = 1000
+
+
+class Explosion:
+    def __init__(self, position):
+        self.image = pygame.transform.scale(pygame.image.load("./asset/image/explosion.png").convert_alpha(), (70, 70))
+        self.rect = self.image.get_rect(center=position)
+        self.time = 500
+
+
+class Over:
+    def __init__(self):
+        self.image = pygame.image.load("./asset/image/game-over.png").convert_alpha()
+        self.rect = self.image.get_rect()
+
+    def draw(self, canvas):
+        canvas.blit(self.image, self.rect)
 
 
 class Robot:
@@ -41,12 +68,15 @@ class Robot:
                     self.explosion.append(Explosion((cX, cY)))
                 self.bomb.remove(b)
                 self.numBomb += 1
-            else: b.time -= 1
+            else:
+                b.time -= 1
 
     def timeExplosion(self):
         for e in self.explosion:
-            if e.time == 0: self.explosion.remove(e)
-            else: e.time -= 1
+            if e.time == 0:
+                self.explosion.remove(e)
+            else:
+                e.time -= 1
 
     def doKill(self):
         cx, cy = self.rect.center
@@ -59,8 +89,8 @@ class Robot:
             self.move()
             self.placeBomb()
             self.doKill()
-        self.timeBomb()
-        self.timeExplosion()
+            self.timeBomb()
+            self.timeExplosion()
 
     def draw(self, canvas):
         for b in self.bomb:
