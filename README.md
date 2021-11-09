@@ -13,17 +13,23 @@ Below is a list containing all entities used in BomBot.
 
 ### Robot
 
+- determined by (x, y)
 - is controlled by the user
 
 ### Brick
 
+- determined by (r, c)
 - destructible
 
 ### Wall
 
+- determined by (r, c)
+
 - non-destructible
 
 ### Floor
+
+- determined by (r, c)
 
 - where everything sits on
 
@@ -33,9 +39,16 @@ Below is a list containing all entities used in BomBot.
 
 ### Bomb
 
+- determined by (r, c)
+
 - once placed, 3 seconds to detonation
 - destructs brick and kills enemy
 - explosion is vertical and horizontal
+
+### Explosion
+
+- determined by (r, c)
+- triggered by bomb
 
 ## Controls
 
