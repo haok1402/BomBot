@@ -1,12 +1,31 @@
 import pygame
 
 
+class Wall:
+    def __init__(self, position):
+        self.image = pygame.transform.scale(pygame.image.load("./asset/image/wall.png").convert_alpha(), (70, 70))
+        self.rect = self.image.get_rect(center=position)
+
+
 class Board:
-    def __init__(self):
-        pass
+    def __init__(self, row, col):
+        self.row, self.col = row, col
+        # left=310, right=1780, gridWidth=70; top=15, bottom=1065, gridHeight=70;
+        self.position = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
+        self.object = [[None for r in range(self.col)] for c in range(self.row)]
+        self.createBoard()
+
+    def createBoard(self):
+        for r in range(self.row):
+            for c in range(self.col):
+                if r == 0 or r == self.row - 1: self.object[r][c] = Wall(self.position[r][c])
+                if c == 0 or c == self.col - 1: self.object[r][c] = Wall(self.position[r][c])
 
     def draw(self, canvas):
         canvas.fill((0, 0, 0))
+        for r in range(self.row):
+            for c in range(self.col):
+                if self.object[r][c]: canvas.blit(self.object[r][c].image, self.object[r][c].rect)
 
 
 class Bomb:
@@ -102,7 +121,7 @@ class Robot:
 
 class App:
     def __init__(self):
-        self.board = Board()
+        self.board = Board(15, 21)
         self.robot = Robot()
         self.over = Over()
 
