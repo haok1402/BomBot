@@ -35,22 +35,22 @@ class Bomb:
             # explosion leftward
             for dc in range(-1, -self.app.robot.numExplosion - 1, -1):
                 if not (0 <= c + dc < self.app.numCol): break
-                if isinstance(self.app.objectBoard[r][c + dc], Wall): break
+                if isinstance(self.app.objectBoard[r][c + dc], Brick or Wall): break
                 self.app.objectBoard[r][c + dc] = Explosion(self.app, self.app.getXY(r, c + dc))
             # explosion upward
             for dr in range(-1, -self.app.robot.numExplosion - 1, -1):
                 if not (0 <= r + dr < self.app.numCol): break
-                if isinstance(self.app.objectBoard[r + dr][c], Wall): break
+                if isinstance(self.app.objectBoard[r + dr][c], Brick or Wall): break
                 self.app.objectBoard[r + dr][c] = Explosion(self.app, self.app.getXY(r + dr, c))
             # explosion rightward
             for dc in range(1, +self.app.robot.numExplosion + 1, 1):
                 if not (0 <= c + dc < self.app.numCol): break
-                if isinstance(self.app.objectBoard[r][c + dc], Wall): break
+                if isinstance(self.app.objectBoard[r][c + dc], Brick or Wall): break
                 self.app.objectBoard[r][c + dc] = Explosion(self.app, self.app.getXY(r, c + dc))            # explosion downward
             # explosion downward
             for dr in range(1, +self.app.robot.numExplosion + 1, 1):
                 if not (0 <= r + dr < self.app.numCol): break
-                if isinstance(self.app.objectBoard[r + dr][c], Wall): break
+                if isinstance(self.app.objectBoard[r + dr][c], Brick or Wall): break
                 self.app.objectBoard[r + dr][c] = Explosion(self.app, self.app.getXY(r + dr, c))
             # explosion center
             self.app.objectBoard[r][c] = Explosion(self.app, self.app.getXY(r, c))
