@@ -89,27 +89,19 @@ class Robot:
             if pygame.key.get_pressed()[pygame.K_UP]:
                 self.rect.move_ip(0, -1)
                 # undo move if collision detected
-                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c - 1]): self.rect.move_ip(0, +1)
                 if self.app.detectCollision(self, self.app.objectBoard[r - 1][c]): self.rect.move_ip(0, +1)
-                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c + 1]): self.rect.move_ip(0, +1)
             elif pygame.key.get_pressed()[pygame.K_DOWN]:
                 self.rect.move_ip(0, +1)
                 # undo move if collision detected
-                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c - 1]): self.rect.move_ip(0, -1)
                 if self.app.detectCollision(self, self.app.objectBoard[r + 1][c]): self.rect.move_ip(0, -1)
-                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c + 1]): self.rect.move_ip(0, -1)
             elif pygame.key.get_pressed()[pygame.K_LEFT]:
                 self.rect.move_ip(-1, 0)
                 # undo move if collision detected
-                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c - 1]): self.rect.move_ip(+1, 0)
                 if self.app.detectCollision(self, self.app.objectBoard[r][c - 1]): self.rect.move_ip(+1, 0)
-                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c - 1]): self.rect.move_ip(+1, 0)
             elif pygame.key.get_pressed()[pygame.K_RIGHT]:
                 self.rect.move_ip(+1, 0)
                 # undo move if collision detected
-                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c + 1]): self.rect.move_ip(-1, 0)
                 if self.app.detectCollision(self, self.app.objectBoard[r][c + 1]): self.rect.move_ip(-1, 0)
-                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c + 1]): self.rect.move_ip(-1, 0)
 
     def bomb(self):
         if self.numBomb and pygame.key.get_pressed()[pygame.K_SPACE]:
