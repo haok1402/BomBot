@@ -15,6 +15,13 @@ class Wall:
         self.rect = self.image.get_rect(center=position)
 
 
+class Brick:
+    def __init__(self, app, position):
+        self.app = app
+        self.image = pygame.transform.scale(pygame.image.load("./asset/image/grape.png").convert_alpha(), (70, 70))
+        self.rect = self.image.get_rect(center=position)
+
+
 class Bomb:
     def __init__(self, app, position):
         self.app = app
@@ -90,8 +97,9 @@ class Robot:
     def bomb(self):
         if self.numBomb and pygame.key.get_pressed()[pygame.K_SPACE]:
             r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
-            if not self.app.objectBoard[r][c]: self.app.objectBoard[r][c] = Bomb(self.app, self.app.getXY(r, c))
-            self.numBomb -= 1
+            if not self.app.objectBoard[r][c]:
+                self.app.objectBoard[r][c] = Bomb(self.app, self.app.getXY(r, c))
+                self.numBomb -= 1
 
 
 class App:
@@ -121,6 +129,9 @@ class App:
             # generate boundary Wall
             if r == 0 or r == self.numRow - 1: self.objectBoard[r][c] = Wall(self, pos)
             if c == 0 or c == self.numCol - 1: self.objectBoard[r][c] = Wall(self, pos)
+            # generate centralized Brick
+            if r == 7 and c != 0 and c != self.numCol - 1: self.objectBoard[r][c] = Brick(self, pos)
+            if c == 10 and r != 0 and r != self.numRow - 1: self.objectBoard[r][c] = Brick(self, pos)
 
     def getRC(self, x: int, y: int) -> tuple:
         r, c = (y - 15) // 70, (x - 310) // 70
