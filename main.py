@@ -1,173 +1,160 @@
 import pygame
 
 
+class Floor:
+    def __init__(self, app, position):
+        self.app = app
+        self.image = pygame.image.load("./asset/image/floor.png").convert_alpha()
+        self.rect = self.image.get_rect(topleft=position)
+
+
 class Wall:
-    def __init__(self, position):
+    def __init__(self, app, position):
+        self.app = app
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/wall.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
 
 
-class Board:
-    def __init__(self, row, col):
-        self.row, self.col = row, col
-        # left=310, right=1780, gridWidth=70; top=15, bottom=1065, gridHeight=70; row=15, col=21;
-        self.positionTable = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
-        self.objectTable = [[None for r in range(self.col)] for c in range(self.row)]
-        self.createBoard()
-
-    def createBoard(self):
-        for r in range(self.row):
-            for c in range(self.col):
-                if r == 0 or r == self.row - 1: self.objectTable[r][c] = Wall(self.positionTable[r][c])
-                if c == 0 or c == self.col - 1: self.objectTable[r][c] = Wall(self.positionTable[r][c])
-
-    def draw(self, canvas):
-        canvas.fill((0, 0, 0))
-        for r in range(self.row):
-            for c in range(self.col):
-                if self.objectTable[r][c]: canvas.blit(self.objectTable[r][c].image, self.objectTable[r][c].rect)
-
-
 class Bomb:
-    def __init__(self, position):
+    def __init__(self, app, position):
+        self.app = app
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/bomb.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
         self.time = 1000
 
+    def detonate(self):
+        if not self.time:
+            r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
+            # explosion leftward
+            for dc in range(-1, -self.app.robot.numExplosion - 1, -1):
+                if not (0 <= c + dc < self.app.numCol): break
+                if isinstance(self.app.objectBoard[r][c + dc], Wall): break
+                self.app.objectBoard[r][c + dc] = Explosion(self.app, self.app.getXY(r, c + dc))
+            # explosion upward
+            for dr in range(-1, -self.app.robot.numExplosion - 1, -1):
+                if not (0 <= r + dr < self.app.numCol): break
+                if isinstance(self.app.objectBoard[r + dr][c], Wall): break
+                self.app.objectBoard[r + dr][c] = Explosion(self.app, self.app.getXY(r + dr, c))
+            # explosion rightward
+            for dc in range(1, +self.app.robot.numExplosion + 1, 1):
+                if not (0 <= c + dc < self.app.numCol): break
+                if isinstance(self.app.objectBoard[r][c + dc], Wall): break
+                self.app.objectBoard[r][c + dc] = Explosion(self.app, self.app.getXY(r, c + dc))            # explosion downward
+            # explosion downward
+            for dr in range(1, +self.app.robot.numExplosion + 1, 1):
+                if not (0 <= r + dr < self.app.numCol): break
+                if isinstance(self.app.objectBoard[r + dr][c], Wall): break
+                self.app.objectBoard[r + dr][c] = Explosion(self.app, self.app.getXY(r + dr, c))
+            # explosion center
+            self.app.objectBoard[r][c] = Explosion(self.app, self.app.getXY(r, c))
+            self.app.robot.numBomb += 1
+            return None
+        self.time -= 1
+
 
 class Explosion:
-    def __init__(self, position):
+    def __init__(self, app, position):
+        self.app = app
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/explosion.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
         self.time = 500
 
-
-class Over:
-    def __init__(self):
-        self.image = pygame.image.load("./asset/image/game-over.png").convert_alpha()
-        self.rect = self.image.get_rect(topleft=(310, 15))
-
-    def draw(self, canvas):
-        canvas.blit(self.image, self.rect)
+    def burn(self):
+        if not self.time:
+            r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
+            self.app.objectBoard[r][c] = None
+            return None
+        self.time -= 1
 
 
 class Robot:
-    def __init__(self, position):
+    def __init__(self, app, position):
+        self.app = app
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/robot.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
-        self.numBomb = 1
-        self.bomb = []
-        self.explosion = []
-        self.explosionDirection = [(-70 * 1, 0), (-70 * 2, 0), (+70 * 1, 0), (+70 * 2, 0),
-                                   (0, -70 * 1), (0, -70 * 2), (0, +70 * 1), (0, +70 * 2), (0, 0)]
         self.isAlive = True
-        self.positionTable = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
+        self.numBomb = 1
+        self.numExplosion = 2
 
     def move(self):
-        keyPressed = pygame.key.get_pressed()
-        if keyPressed[pygame.K_UP]:
-            self.rect.move_ip(0, -1)
-        elif keyPressed[pygame.K_DOWN]:
-            self.rect.move_ip(0, +1)
-        elif keyPressed[pygame.K_LEFT]:
-            self.rect.move_ip(-1, 0)
-        elif keyPressed[pygame.K_RIGHT]:
-            self.rect.move_ip(+1, 0)
-
-    def placeBomb(self):
-        keyPressed = pygame.key.get_pressed()
-        if keyPressed[pygame.K_SPACE] and self.numBomb:
-            # fix robot(x, y) to bomb(r, c)
-            r, c = (self.rect.centery - 15) // 70, (self.rect.centerx - 310) // 70
-            self.bomb.append(Bomb(self.positionTable[r][c]))
-            self.numBomb -= 1
-
-    def timeBomb(self):
-        for b in self.bomb:
-            if b.time == 0:
-                for dX, dY in self.explosionDirection:
-                    cX, cY = b.rect.center[0] + dX, b.rect.center[1] + dY
-                    self.explosion.append(Explosion((cX, cY)))
-                self.bomb.remove(b)
-                self.numBomb += 1
-            else:
-                b.time -= 1
-
-    def timeExplosion(self):
-        for e in self.explosion:
-            if e.time == 0:
-                self.explosion.remove(e)
-            else:
-                e.time -= 1
-
-    def doKill(self):
-        cx, cy = self.rect.center
-        for e in self.explosion:
-            (x0, y0), (x1, y1) = e.rect.topleft, e.rect.bottomright
-            if (x0 <= cx <= x1) and (y0 <= cy <= y1): self.isAlive = False
-
-    def update(self):
         if self.isAlive:
-            self.move()
-            self.placeBomb()
-            self.doKill()
-            self.timeBomb()
-            self.timeExplosion()
+            if pygame.key.get_pressed()[pygame.K_UP]:
+                self.rect.move_ip(0, -1)
+            elif pygame.key.get_pressed()[pygame.K_DOWN]:
+                self.rect.move_ip(0, +1)
+            elif pygame.key.get_pressed()[pygame.K_LEFT]:
+                self.rect.move_ip(-1, 0)
+            elif pygame.key.get_pressed()[pygame.K_RIGHT]:
+                self.rect.move_ip(+1, 0)
 
-    def draw(self, canvas):
-        for b in self.bomb:
-            canvas.blit(b.image, b.rect)
-        for e in self.explosion:
-            canvas.blit(e.image, e.rect)
-        canvas.blit(self.image, self.rect)
+    def bomb(self):
+        if self.numBomb and pygame.key.get_pressed()[pygame.K_SPACE]:
+            r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
+            if not self.app.objectBoard[r][c]: self.app.objectBoard[r][c] = Bomb(self.app, self.app.getXY(r, c))
+            self.numBomb -= 1
 
 
 class App:
     def __init__(self):
-        self.board = Board(15, 21)
-        self.robot = Robot(self.board.positionTable[1][1])
-        self.over = Over()
+        # configure canvas
+        self.canvas = pygame.display.set_mode(size=(0, 0), flags=pygame.FULLSCREEN)
+        pygame.display.set_caption("BomBot")
+        # configure mouse
+        pygame.mouse.set_visible(False)
+        # configure game
+        self.isGameOver = False
+        self.numRow, self.numCol = 15, 21
+        self.positionBoard = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
+        self.objectBoard = [[None for c in range(self.numCol)] for _ in range(self.numRow)]
+        self.generateBoard()
+        # configure sprite
+        self.floor = Floor(self, (310, 15))
+        self.robot = Robot(self, self.positionBoard[1][1])
+
+    def __iter__(self):
+        for r in range(self.numRow):
+            for c in range(self.numCol):
+                yield r, c, self.positionBoard[r][c], self.objectBoard[r][c]
+
+    def generateBoard(self):
+        for r, c, pos, obj in self:
+            # generate boundary Wall
+            if r == 0 or r == self.numRow - 1: self.objectBoard[r][c] = Wall(self, pos)
+            if c == 0 or c == self.numCol - 1: self.objectBoard[r][c] = Wall(self, pos)
+
+    def getRC(self, x: int, y: int) -> tuple:
+        r, c = (y - 15) // 70, (x - 310) // 70
+        return r, c
+
+    def getXY(self, r: int, c: int) -> tuple:
+        x, y = self.positionBoard[r][c]
+        return x, y
 
     def update(self):
-        self.robot.update()
+        self.robot.move()
+        self.robot.bomb()
+        for r, c, pos, obj in self:
+            if isinstance(obj, Bomb): obj.detonate()
+            if isinstance(obj, Explosion): obj.burn()
 
-    def draw(self, canvas):
-        self.board.draw(canvas)
-        self.robot.draw(canvas)
-        if not self.robot.isAlive: self.over.draw(canvas)
-
-
-def captureEvent():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT: return False
-    return True
-
-
-def appStarted():
-    canvas = pygame.display.set_mode(size=(0, 0), flags=pygame.FULLSCREEN)
-    pygame.display.set_caption("BomBot")
-    pygame.mouse.set_visible(False)
-    return App(), canvas
-
-
-def updateObject(app):
-    app.update()
-
-
-def updateCanvas(app, canvas):
-    app.draw(canvas)
-    pygame.display.flip()
+    def draw(self):
+        self.canvas.blit(self.floor.image, self.floor.rect)
+        for r, c, pos, obj in self:
+            if obj: self.canvas.blit(obj.image, obj.rect)
+        self.canvas.blit(self.robot.image, self.robot.rect)
+        pygame.display.flip()
 
 
 def main():
     # initialize
-    app, canvas = appStarted()
-    appRunning = True
+    pygame.init()
+    app, run = App(), True
     # mainloop
-    while appRunning:
-        appRunning = captureEvent()
-        updateObject(app)
-        updateCanvas(app, canvas)
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: run = False
+        app.draw()
+        app.update()
     # terminate
     pygame.quit()
 
