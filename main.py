@@ -35,22 +35,22 @@ class Bomb:
             # explosion leftward
             for dc in range(-1, -self.app.robot.numExplosion - 1, -1):
                 if not (0 <= c + dc < self.app.numCol): break
-                if isinstance(self.app.objectBoard[r][c + dc], Brick or Wall): break
+                if isinstance(self.app.objectBoard[r][c + dc], Wall): break
                 self.app.objectBoard[r][c + dc] = Explosion(self.app, self.app.getXY(r, c + dc))
             # explosion upward
             for dr in range(-1, -self.app.robot.numExplosion - 1, -1):
                 if not (0 <= r + dr < self.app.numCol): break
-                if isinstance(self.app.objectBoard[r + dr][c], Brick or Wall): break
+                if isinstance(self.app.objectBoard[r + dr][c], Wall): break
                 self.app.objectBoard[r + dr][c] = Explosion(self.app, self.app.getXY(r + dr, c))
             # explosion rightward
             for dc in range(1, +self.app.robot.numExplosion + 1, 1):
                 if not (0 <= c + dc < self.app.numCol): break
-                if isinstance(self.app.objectBoard[r][c + dc], Brick or Wall): break
-                self.app.objectBoard[r][c + dc] = Explosion(self.app, self.app.getXY(r, c + dc))            # explosion downward
+                if isinstance(self.app.objectBoard[r][c + dc], Wall): break
+                self.app.objectBoard[r][c + dc] = Explosion(self.app, self.app.getXY(r, c + dc))
             # explosion downward
             for dr in range(1, +self.app.robot.numExplosion + 1, 1):
                 if not (0 <= r + dr < self.app.numCol): break
-                if isinstance(self.app.objectBoard[r + dr][c], Brick or Wall): break
+                if isinstance(self.app.objectBoard[r + dr][c], Wall): break
                 self.app.objectBoard[r + dr][c] = Explosion(self.app, self.app.getXY(r + dr, c))
             # explosion center
             self.app.objectBoard[r][c] = Explosion(self.app, self.app.getXY(r, c))
@@ -85,14 +85,31 @@ class Robot:
 
     def move(self):
         if self.isAlive:
+            r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
             if pygame.key.get_pressed()[pygame.K_UP]:
                 self.rect.move_ip(0, -1)
+                # undo move if collision detected
+                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c - 1]): self.rect.move_ip(0, +1)
+                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c]): self.rect.move_ip(0, +1)
+                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c + 1]): self.rect.move_ip(0, +1)
             elif pygame.key.get_pressed()[pygame.K_DOWN]:
                 self.rect.move_ip(0, +1)
+                # undo move if collision detected
+                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c - 1]): self.rect.move_ip(0, -1)
+                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c]): self.rect.move_ip(0, -1)
+                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c + 1]): self.rect.move_ip(0, -1)
             elif pygame.key.get_pressed()[pygame.K_LEFT]:
                 self.rect.move_ip(-1, 0)
+                # undo move if collision detected
+                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c - 1]): self.rect.move_ip(+1, 0)
+                if self.app.detectCollision(self, self.app.objectBoard[r][c - 1]): self.rect.move_ip(+1, 0)
+                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c - 1]): self.rect.move_ip(+1, 0)
             elif pygame.key.get_pressed()[pygame.K_RIGHT]:
                 self.rect.move_ip(+1, 0)
+                # undo move if collision detected
+                if self.app.detectCollision(self, self.app.objectBoard[r - 1][c + 1]): self.rect.move_ip(-1, 0)
+                if self.app.detectCollision(self, self.app.objectBoard[r][c + 1]): self.rect.move_ip(-1, 0)
+                if self.app.detectCollision(self, self.app.objectBoard[r + 1][c + 1]): self.rect.move_ip(-1, 0)
 
     def bomb(self):
         if self.numBomb and pygame.key.get_pressed()[pygame.K_SPACE]:
@@ -140,6 +157,22 @@ class App:
     def getXY(self, r: int, c: int) -> tuple:
         x, y = self.positionBoard[r][c]
         return x, y
+
+    def detectCollision(self, object01, object02):
+        if not (object01 and object02): return None
+        # capture (x, y) for object01 and object02
+        (x1, y1), (x2, y2) = object01.rect.topleft, object01.rect.bottomright
+        (x3, y3), (x4, y4) = object02.rect.topleft, object02.rect.bottomright
+        # object02 collides object01 from bottom-right
+        if (x1 <= x3 <= x2) and (y1 <= y3 <= y2): return type(object02)
+        # object02 collides object01 from bottom-left
+        if (x1 <= x4 <= x2) and (y1 <= y3 <= y2): return type(object02)
+        # object02 collides object01 from top-right
+        if (x1 <= x3 <= x2) and (y1 <= y4 <= y2): return type(object02)
+        # object02 collides object01 from top-left
+        if (x1 <= x4 <= x2) and (y1 <= y4 <= y2): return type(object02)
+        # no collision detected
+        return None
 
     def update(self):
         self.robot.move()
