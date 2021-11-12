@@ -4,7 +4,7 @@ import pygame
 class Floor:
     def __init__(self, app, position):
         self.app = app
-        self.image = pygame.image.load("./asset/image/floor.png").convert_alpha()
+        self.image = pygame.image.load("asset/image/floor.png").convert_alpha()
         self.rect = self.image.get_rect(topleft=position)
 
 
@@ -18,7 +18,7 @@ class Wall:
 class Brick:
     def __init__(self, app, position):
         self.app = app
-        self.image = pygame.transform.scale(pygame.image.load("./asset/image/grape.png").convert_alpha(), (70, 70))
+        self.image = pygame.transform.scale(pygame.image.load("asset/image/brick.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
 
 
@@ -27,7 +27,7 @@ class Bomb:
         self.app = app
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/bomb.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
-        self.time = 1000
+        self.time = 500
 
     def detonate(self):
         if not self.time:
@@ -72,7 +72,7 @@ class Explosion:
         self.app = app
         self.image = pygame.transform.scale(pygame.image.load("./asset/image/explosion.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
-        self.time = 500
+        self.time = 250
 
     def burn(self):
         if not self.time:
@@ -101,29 +101,30 @@ class Robot:
         self.isAlive = True
         self.numBomb = 1
         self.numExplosion = 2
+        self.velocity = 2
 
     def move(self):
         r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
         if pygame.key.get_pressed()[pygame.K_UP]:
-            self.rect.move_ip(0, -1)
+            self.rect.move_ip(0, -self.velocity)
             # undo move if collision detected
             collision = self.app.detectCollision(self, self.app.objectBoard[r - 1][c])
-            if collision and not isinstance(collision, Explosion): self.rect.move_ip(0, +1)
+            if collision and not isinstance(collision, Explosion): self.rect.move_ip(0, +self.velocity)
         elif pygame.key.get_pressed()[pygame.K_DOWN]:
-            self.rect.move_ip(0, +1)
+            self.rect.move_ip(0, +self.velocity)
             # undo move if collision detected
             collision = self.app.detectCollision(self, self.app.objectBoard[r + 1][c])
-            if collision and not isinstance(collision, Explosion): self.rect.move_ip(0, -1)
+            if collision and not isinstance(collision, Explosion): self.rect.move_ip(0, -self.velocity)
         elif pygame.key.get_pressed()[pygame.K_LEFT]:
-            self.rect.move_ip(-1, 0)
+            self.rect.move_ip(-self.velocity, 0)
             # undo move if collision detected
             collision = self.app.detectCollision(self, self.app.objectBoard[r][c - 1])
-            if collision and not isinstance(collision, Explosion): self.rect.move_ip(+1, 0)
+            if collision and not isinstance(collision, Explosion): self.rect.move_ip(+self.velocity, 0)
         elif pygame.key.get_pressed()[pygame.K_RIGHT]:
-            self.rect.move_ip(+1, 0)
+            self.rect.move_ip(+self.velocity, 0)
             # undo move if collision detected
             collision = self.app.detectCollision(self, self.app.objectBoard[r][c + 1])
-            if collision and not isinstance(collision, Explosion): self.rect.move_ip(-1, 0)
+            if collision and not isinstance(collision, Explosion): self.rect.move_ip(-self.velocity, 0)
 
     def bomb(self):
         if self.numBomb and pygame.key.get_pressed()[pygame.K_SPACE]:
