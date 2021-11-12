@@ -90,6 +90,7 @@ class Over:
     def __init__(self, app, position):
         self.app = app
         self.image = pygame.image.load("asset/image/over.png").convert_alpha()
+        self.image.set_alpha(215)
         self.rect = self.image.get_rect(center=position)
 
 
