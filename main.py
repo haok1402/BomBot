@@ -1,7 +1,6 @@
 import pygame
 import random
 
-
 class Floor:
     def __init__(self, app, position):
         self.app = app
@@ -164,11 +163,13 @@ class App:
             # generate randomized Brick
             num = random.random()
             if 0.0 <= num < 0.4: self.objectBoard[r][c] = None
-            if 0.3 <= num < 0.8: self.objectBoard[r][c] = Brick(self, pos)
+            if 0.4 <= num < 0.8: self.objectBoard[r][c] = Brick(self, pos)
             if 0.8 <= num < 1.0: self.objectBoard[r][c] = Wall(self, pos)
             # generate boundary Wall
             if r == 0 or r == self.numRow - 1: self.objectBoard[r][c] = Wall(self, pos)
             if c == 0 or c == self.numCol - 1: self.objectBoard[r][c] = Wall(self, pos)
+            # generate space Robot
+            if (r, c) == (1, 1) or (r, c) == (1, 2) or (r, c) == (2, 1): self.objectBoard[r][c] = None
             # generate centralized Brick
             # if r == 7 and c != 0 and c != self.numCol - 1: self.objectBoard[r][c] = Brick(self, pos)
             # if c == 10 and r != 0 and r != self.numRow - 1: self.objectBoard[r][c] = Brick(self, pos)
