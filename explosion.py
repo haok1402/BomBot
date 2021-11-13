@@ -19,4 +19,8 @@ class Explosion:
         cx, cy = self.app.robot.rect.center
         if (self.rect.left <= cx <= self.rect.right) and (self.rect.top <= cy <= self.rect.bottom):
             self.app.robot.isAlive = False
+        for enemy in self.app.enemy:
+            ex, ey = enemy.rect.center
+            if (self.rect.left <= ex <= self.rect.right) and (self.rect.top <= ey <= self.rect.bottom):
+                enemy.isAlive = False
         self.time -= 1

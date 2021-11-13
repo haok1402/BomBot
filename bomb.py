@@ -47,6 +47,7 @@ class Bomb:
                 if isinstance(nextObject, Brick): break
             # explosion center
             self.app.objectBoard[r][c] = Explosion(self.app, self.app.getXY(r, c))
+
             self.app.robot.numBomb += 1
             return None
         self.time -= 1

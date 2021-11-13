@@ -12,6 +12,7 @@ from bomb import Bomb
 from explosion import Explosion
 from over import Over
 from robot import Robot
+from enemy import Enemy
 
 
 class App:
@@ -31,6 +32,9 @@ class App:
         self.floor = Floor(self, (310, 15))
         self.robot = Robot(self, self.positionBoard[1][1])
         self.over = Over(self, position=(1045, 540))
+        self.enemy = [Enemy(self, self.positionBoard[13][1], 1),
+                      Enemy(self, self.positionBoard[1][19], 2),
+                      Enemy(self, self.positionBoard[13][19], 3)]
 
     def __iter__(self):
         for r in range(self.numRow):
@@ -89,9 +93,11 @@ class App:
         self.canvas.blit(self.floor.image, self.floor.rect)
         for r, c, pos, obj in self:
             if obj: self.canvas.blit(obj.image, obj.rect)
+        for enemy in self.enemy:
+            self.canvas.blit(enemy.image, enemy.rect)
+            if not enemy.isAlive: self.enemy.remove(enemy)
         self.canvas.blit(self.robot.image, self.robot.rect)
-        if not self.robot.isAlive:
-            self.canvas.blit(self.over.image, self.over.rect)
+        if not self.robot.isAlive: self.canvas.blit(self.over.image, self.over.rect)
         pygame.display.flip()
 
 
