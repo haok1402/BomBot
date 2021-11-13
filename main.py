@@ -46,7 +46,7 @@ class App:
             # generate randomized Brick
             num = random.random()
             if 0.0 <= num < 0.4: self.objectBoard[r][c] = None
-            if 0.4 <= num < 0.8: self.objectBoard[r][c] = Brick(self, pos)
+            if 0.5 <= num < 0.8: self.objectBoard[r][c] = Brick(self, pos)
             if 0.8 <= num < 1.0: self.objectBoard[r][c] = Wall(self, pos)
             # generate boundary Wall
             if r == 0 or r == self.numRow - 1: self.objectBoard[r][c] = Wall(self, pos)
