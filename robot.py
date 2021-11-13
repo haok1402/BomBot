@@ -43,5 +43,5 @@ class Robot:
         if self.numBomb and pygame.key.get_pressed()[pygame.K_SPACE]:
             r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
             if not self.app.objectBoard[r][c]:
-                self.app.objectBoard[r][c] = Bomb(self.app, self.app.getXY(r, c))
+                self.app.objectBoard[r][c] = Bomb(self.app, self.app.getXY(r, c), self)
                 self.numBomb -= 1

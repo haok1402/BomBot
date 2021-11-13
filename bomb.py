@@ -8,11 +8,12 @@ BOMB_IMG = pygame.transform.scale(pygame.image.load("./asset/image/bomb.png").co
 
 
 class Bomb:
-    def __init__(self, app, position):
+    def __init__(self, app, position, bomber):
         self.app = app
         self.image = BOMB_IMG
         self.rect = self.image.get_rect(center=position)
         self.time = 500
+        self.bomber = bomber
 
     def detonate(self):
         if not self.time:
@@ -47,7 +48,6 @@ class Bomb:
                 if isinstance(nextObject, Brick): break
             # explosion center
             self.app.objectBoard[r][c] = Explosion(self.app, self.app.getXY(r, c))
-
-            self.app.robot.numBomb += 1
+            self.bomber.numBomb += 1
             return None
         self.time -= 1

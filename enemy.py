@@ -1,6 +1,5 @@
 import pygame
 
-from explosion import Explosion
 from bomb import Bomb
 
 ENEMY_IMG = {1: pygame.transform.scale(pygame.image.load("./asset/image/robot-2.png").convert_alpha(), (70, 70)),
@@ -23,5 +22,5 @@ class Enemy:
         if self.numBomb:
             r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
             if self.app.objectBoard[r][c]: return
-            self.app.objectBoard[r][c] = Bomb(self.app, self.app.getXY(r, c))
+            self.app.objectBoard[r][c] = Bomb(self.app, self.app.getXY(r, c), self)
             self.numBomb -= 1
