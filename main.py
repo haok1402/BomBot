@@ -1,3 +1,4 @@
+# import external dependencies
 import pygame
 import random
 
@@ -5,6 +6,7 @@ import random
 pygame.init()
 canvas = pygame.display.set_mode(size=(1920, 1080), flags=pygame.FULLSCREEN)
 
+# import internal dependencies
 from asset.sprite.floor import Floor
 from asset.sprite.wall import Wall
 from asset.sprite.brick import Brick

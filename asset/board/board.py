@@ -7,29 +7,6 @@ block = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
          [1, 0, 0, 0, 0, 0, 0, 0, 0, 1]]
 
 
-# Depth-First (Graph)
-class Graph:
-    def __init__(self):
-        self.table = {}
-
-    def addEdge(self, nodeA, nodeB, weight=1):
-        if nodeA not in self.table:
-            self.table[nodeA] = {}
-        if nodeB not in self.table:
-            self.table[nodeB] = {}
-        self.table[nodeA][nodeB] = weight
-        self.table[nodeB][nodeA] = weight
-
-    def getEdge(self, nodeA, nodeB):
-        return self.table[nodeA][nodeB]
-
-    def getNodes(self):
-        return list(self.table)
-
-    def getNeighbors(self, node):
-        return set(self.table[node])
-
-
 # Depth-First (2D List)
 def generate_DFS(block, cRow, cCol, tRow, tCol, visited):
     import random
@@ -72,6 +49,3 @@ def visualize_DFS():
     for key in data: density += [int(key)] * data[key]
     seaborn.set_style('whitegrid')
     seaborn.kdeplot(numpy.array(density)).figure.savefig("Depth-First PathLength Distribution.png")
-
-
-path = generate_DFS(block)
