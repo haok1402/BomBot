@@ -47,5 +47,13 @@ Below is a list containing all controls used in BomBot.
 
 - Drop Bomb: Space
 
+## Known Issues
+
+- Board Generation:
+  - by chance, large amount of emptiness in one location
+  - by chance, robot is directly connected to other enemies without bombing bricks
+  - by chance, large amount of bricks in one location
+  - by chance, useless wall created (robot cannot enter space in between walls for shelter)
+
 
 
