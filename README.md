@@ -49,7 +49,7 @@ Below is a list containing all controls used in BomBot.
 
 ## Known Issues
 
-- Board Generation:
+### Board Generation:
   - by chance, large amount of emptiness in one location
   - by chance, robot is directly connected to other enemies without bombing bricks
   - by chance, large amount of bricks in one location
