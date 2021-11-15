@@ -1,6 +1,9 @@
 # BomBot
 
+- Term Project for 15-112 (F21) at CMU
+- BomBot Designed with PyGame
 
+![Preview] (./asset/image/preview.png)
 
 ## Entities
 
