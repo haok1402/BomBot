@@ -1,8 +1,8 @@
 import pygame
 
-from wall import Wall
-from brick import Brick
-from explosion import Explosion
+from asset.wall import Wall
+from asset.brick import Brick
+from asset.explosion import Explosion
 
 BOMB_IMG = pygame.transform.scale(pygame.image.load("./asset/image/bomb.png").convert_alpha(), (70, 70))
 

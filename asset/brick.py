@@ -1,6 +1,6 @@
 import pygame
 
-BRICK_IMG = pygame.transform.scale(pygame.image.load("asset/image/brick.png").convert_alpha(), (70, 70))
+BRICK_IMG = pygame.transform.scale(pygame.image.load("./asset/image/brick.png").convert_alpha(), (70, 70))
 
 
 class Brick:

@@ -1,6 +1,6 @@
 import pygame
 
-FLOOR_IMG = pygame.image.load("asset/image/floor.png").convert_alpha()
+FLOOR_IMG = pygame.image.load("./asset/image/floor.png").convert_alpha()
 
 
 class Floor:

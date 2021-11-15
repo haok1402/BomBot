@@ -72,3 +72,6 @@ def visualize_DFS():
     for key in data: density += [int(key)] * data[key]
     seaborn.set_style('whitegrid')
     seaborn.kdeplot(numpy.array(density)).figure.savefig("Depth-First PathLength Distribution.png")
+
+
+path = generate_DFS(block)

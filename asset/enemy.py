@@ -1,6 +1,6 @@
 import pygame
 
-from bomb import Bomb
+from asset.bomb import Bomb
 
 ENEMY_IMG = {1: pygame.transform.scale(pygame.image.load("./asset/image/robot-2.png").convert_alpha(), (70, 70)),
              2: pygame.transform.scale(pygame.image.load("./asset/image/robot-3.png").convert_alpha(), (70, 70)),
@@ -17,6 +17,9 @@ class Enemy:
         self.numExplosion = 2
         self.velocity = 2
         self.bomb()
+
+    def move(self):
+        pass
 
     def bomb(self):
         if self.numBomb:

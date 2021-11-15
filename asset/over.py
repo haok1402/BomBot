@@ -1,6 +1,6 @@
 import pygame
 
-OVER_IMG = pygame.image.load("asset/image/over.png").convert_alpha()
+OVER_IMG = pygame.image.load("./asset/image/over.png").convert_alpha()
 
 
 class Over:

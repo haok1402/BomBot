@@ -1,7 +1,7 @@
 import pygame
 
-from explosion import Explosion
-from bomb import Bomb
+from asset.explosion import Explosion
+from asset.bomb import Bomb
 
 ROBOT_IMG = pygame.transform.scale(pygame.image.load("./asset/image/robot-1.png").convert_alpha(), (70, 70))
 
