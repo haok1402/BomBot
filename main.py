@@ -5,14 +5,14 @@ import random
 pygame.init()
 canvas = pygame.display.set_mode(size=(1920, 1080), flags=pygame.FULLSCREEN)
 
-from asset.floor import Floor
-from asset.wall import Wall
-from asset.brick import Brick
-from asset.bomb import Bomb
-from asset.explosion import Explosion
-from asset.over import Over
-from asset.robot import Robot
-from asset.enemy import Enemy
+from asset.sprite.floor import Floor
+from asset.sprite.wall import Wall
+from asset.sprite.brick import Brick
+from asset.sprite.bomb import Bomb
+from asset.sprite.explosion import Explosion
+from asset.sprite.over import Over
+from asset.sprite.robot import Robot
+from asset.sprite.enemy import Enemy
 
 
 class App:

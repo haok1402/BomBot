@@ -1,6 +1,6 @@
 import pygame
 
-from asset.bomb import Bomb
+from asset.sprite.bomb import Bomb
 
 ENEMY_IMG = {1: pygame.transform.scale(pygame.image.load("./asset/image/robot-2.png").convert_alpha(), (70, 70)),
              2: pygame.transform.scale(pygame.image.load("./asset/image/robot-3.png").convert_alpha(), (70, 70)),
