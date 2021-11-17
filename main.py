@@ -37,6 +37,7 @@ class App:
         self.enemy = [Enemy(self, self.positionBoard[13][1], 1),
                       Enemy(self, self.positionBoard[1][19], 2),
                       Enemy(self, self.positionBoard[13][19], 3)]
+        print(self.objectBoard)
 
     def __iter__(self):
         for r in range(self.numRow):
