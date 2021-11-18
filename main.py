@@ -52,20 +52,11 @@ class App:
             if r == 0 or r == self.numRow - 1: self.objectBoard[r][c] = Wall(self, pos)
             if c == 0 or c == self.numCol - 1: self.objectBoard[r][c] = Wall(self, pos)
             # generate space Robot
-            if (r, c) == (1, 1) or (r, c) == (1, 2) or (r, c) == (2, 1): self.objectBoard[r][c] = None
-            if (r, c) == (13, 1) or (r, c) == (12, 1) or (r, c) == (13, 2): self.objectBoard[r][c] = None
-            if (r, c) == (1, 19) or (r, c) == (2, 19) or (r, c) == (1, 18): self.objectBoard[r][c] = None
-            if (r, c) == (13, 19) or (r, c) == (12, 19) or (r, c) == (13, 18): self.objectBoard[r][c] = None
-            # path-finding simulation
-            path = [(13, 1), (12, 1), (11, 1), (10, 1), (9, 1),
-                    (13, 2), (12, 2), (11, 2), (10, 2), (9, 2),
-                    (13, 3), (12, 3), (11, 3), (10, 3), (9, 3),
-                    (13, 4), (12, 4), (11, 4), (10, 4), (9, 4),
-                    (13, 5), (12, 5), (11, 5), (10, 5), (9, 5)]
-            wall = [(13, 2), (12, 4), (11, 4), (11, 3), (11, 2), (10, 1), (10, 4), (9, 4),
-                    (9, 3), (8, 5)]
-            if (r, c) in path: self.objectBoard[r][c] = None
-            if (r, c) in wall: self.objectBoard[r][c] = Wall(self, pos)
+            robotSpace = {(1, 1), (1, 2), (2, 1),
+                          (13, 1), (12, 1), (13, 2),
+                          (1, 19), (2, 19), (1, 18),
+                          (13, 19), (12, 19), (13, 18)}
+            if (r, c) in robotSpace: self.objectBoard[r][c] = None
 
     def getRC(self, x: int, y: int) -> tuple:
         r, c = (y - 15) // 70, (x - 310) // 70
