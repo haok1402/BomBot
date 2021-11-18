@@ -33,10 +33,12 @@ class Enemy:
             self.numBomb -= 1
 
     def automate(self):
+        # find path
         if not self.route:
             path = self.path()
             if not path: return
             self.route = path
+        # move accordingly
         r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
         if self.rect.centerx < self.route[-1][0]:
             self.rect.move_ip(+self.velocity, 0)

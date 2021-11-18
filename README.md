@@ -16,6 +16,12 @@
 ### Enemy
 
 - behave similar to Robot but try to kill robot
+- moving logics:
+  - check safe or not
+    - if dangerous: move to somewhere safe
+  - find the shortest path to Robot
+  - bomb Brick along the path
+  - reach Robot and BomBot
 
 ### Brick
 
