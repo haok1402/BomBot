@@ -16,12 +16,6 @@
 ### Enemy
 
 - behave similar to Robot but try to kill robot
-- moving logics:
-  - check safe or not
-    - if dangerous: move to somewhere safe
-  - find the shortest path to Robot
-  - bomb Brick along the path
-  - reach Robot and BomBot
 
 ### Brick
 
@@ -53,6 +47,35 @@ Below is a list containing all controls used in BomBot.
 
 - Drop Bomb: Space
 
+## Game AI
+
+### Shortest-Path Finding
+
+- Dijkstra
+  - mode="normal"
+    - assign weight=0 for Floor
+    - assign weight=500 for Brick
+      - account for time-loss due to bombing Brick
+    - Wall, Bomb, Explosion are removed from Graph
+    - len(graph) around 195
+  - mode="survive"
+    - Wall, Brick, Bomb, Explosion are removed from Graph
+    - path to safety doesn't require bombing any Brick
+    - len(graph) around 140
+
+### Check Safety
+
+- if in dangerous mode:
+  - move to somewhere safe
+  - stay in that place until bomb is detonated
+
+### Bomb Robot
+
+- find the shortest path to Robot
+
+- bomb Brick along the path
+- reach Robot and BomBot
+
 ## Known Issues
 
 ### Board Generation:
@@ -60,6 +83,3 @@ Below is a list containing all controls used in BomBot.
   - by chance, robot is directly connected to other enemies without bombing bricks
   - by chance, large amount of bricks in one location
   - by chance, useless wall created (robot cannot enter space in between walls for shelter)
-
-
-
