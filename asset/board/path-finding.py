@@ -57,11 +57,8 @@ class Graph:
         return GetPath()
 
 
-m = [[0, 9, 8, 7, 6],
-     [9, 8, 7, 6, 5],
-     [8, 7, 0, 5, 4],
-     [7, 6, 5, 4, 3],
-     [6, 5, 4, 3, 0]]
-
+from random import randint
+m = [[randint(0, 9) for _ in range(5)] for _ in range(5)]
+for i in m: print(i)
 g = Graph(m)
 print(g.Dijkstra(sNode=(0, 0), eNode=(4, 4)))

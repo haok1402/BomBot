@@ -34,10 +34,7 @@ class App:
         self.floor = Floor(self, (310, 15))
         self.robot = Robot(self, self.positionBoard[1][1])
         self.over = Over(self, position=(1045, 540))
-        self.enemy = [Enemy(self, self.positionBoard[13][1], 1),
-                      Enemy(self, self.positionBoard[1][19], 2),
-                      Enemy(self, self.positionBoard[13][19], 3)]
-        print(self.objectBoard)
+        self.enemy = [Enemy(self, self.positionBoard[13][1])]
 
     def __iter__(self):
         for r in range(self.numRow):
@@ -59,6 +56,16 @@ class App:
             if (r, c) == (13, 1) or (r, c) == (12, 1) or (r, c) == (13, 2): self.objectBoard[r][c] = None
             if (r, c) == (1, 19) or (r, c) == (2, 19) or (r, c) == (1, 18): self.objectBoard[r][c] = None
             if (r, c) == (13, 19) or (r, c) == (12, 19) or (r, c) == (13, 18): self.objectBoard[r][c] = None
+            # path-finding simulation
+            path = [(13, 1), (12, 1), (11, 1), (10, 1), (9, 1),
+                    (13, 2), (12, 2), (11, 2), (10, 2), (9, 2),
+                    (13, 3), (12, 3), (11, 3), (10, 3), (9, 3),
+                    (13, 4), (12, 4), (11, 4), (10, 4), (9, 4),
+                    (13, 5), (12, 5), (11, 5), (10, 5), (9, 5)]
+            wall = [(13, 2), (12, 4), (11, 4), (11, 3), (11, 2), (10, 1), (10, 4), (9, 4),
+                    (9, 3), (8, 5)]
+            if (r, c) in path: self.objectBoard[r][c] = None
+            if (r, c) in wall: self.objectBoard[r][c] = Wall(self, pos)
 
     def getRC(self, x: int, y: int) -> tuple:
         r, c = (y - 15) // 70, (x - 310) // 70
@@ -91,6 +98,8 @@ class App:
             for r, c, pos, obj in self:
                 if isinstance(obj, Bomb): obj.detonate()
                 if isinstance(obj, Explosion): obj.burn()
+        for enemy in self.enemy:
+            enemy.automate()
 
     def draw(self):
         self.canvas.blit(self.floor.image, self.floor.rect)
