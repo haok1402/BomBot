@@ -4,8 +4,8 @@ from asset.sprite.bomb import Bomb
 
 
 class Graph:
-    def __init__(self, board):
-        self.board = board
+    def __init__(self, board, mode="normal"):
+        self.mode, self.board, self.status = mode, board, False  # self.status avoids dijkstra over self.graph twice
         self.graph, self.path = dict(), dict()
         self.unvisited, self.visited = set(), set()
         self.GridToGraph()
@@ -13,6 +13,8 @@ class Graph:
     def GridToGraph(self):
         for x1 in range(len(self.board)):
             for y1 in range(len(self.board[0])):
+                # only search for Floor with weight=0 when trying to avoid bombs
+                if self.mode == "survive" and self.board[x1][y1]: continue
                 # initialize (x1, y1) in graph
                 if isinstance(self.board[x1][y1], Wall): continue
                 if isinstance(self.board[x1][y1], Bomb): continue
@@ -23,6 +25,8 @@ class Graph:
                     # initialize (x2, y2) in graph
                     if not 0 <= x2 < len(self.board): continue
                     if not 0 <= y2 < len(self.board[0]): continue
+                    # only search for Floor with weight=0 when trying to avoid bombs
+                    if self.mode == "survive" and self.board[x2][y2]: continue
                     if isinstance(self.board[x2][y2], Wall): continue
                     if isinstance(self.board[x2][y2], Bomb): continue
                     if (x2, y2) not in self.graph:
@@ -38,10 +42,6 @@ class Graph:
                         self.graph[(x1, y1)][(x2, y2)] = 500
 
     def Dijkstra(self, sNode, eNode):
-        # initialize dijkstra
-        for key in self.graph:
-            self.path[key] = {"distance": float("inf"), "previous": None}
-            self.unvisited.add(key)
 
         def NextNode():
             minNode, minDistance = None, float("inf")
@@ -71,8 +71,14 @@ class Graph:
             path = path if len(path) != 1 else []
             return path
 
-        # execute dijkstra
-        self.path[sNode]["distance"] = 0
-        while self.unvisited: UpdatePath()
-        route = GetPath()
-        return route
+        if not self.status:
+            # initialize dijkstra
+            self.path[sNode]["distance"] = 0
+            for key in self.graph:
+                self.path[key] = {"distance": float("inf"), "previous": None}
+                self.unvisited.add(key)
+            # execute dijkstra
+            while self.unvisited: UpdatePath()
+            self.status = True
+        # return dijkstra's path
+        return GetPath()
