@@ -1,5 +1,6 @@
 from asset.sprite.wall import Wall
 from asset.sprite.brick import Brick
+from asset.sprite.bomb import Bomb
 
 
 class Graph:
@@ -14,6 +15,7 @@ class Graph:
             for y1 in range(len(self.board[0])):
                 # initialize (x1, y1) in graph
                 if isinstance(self.board[x1][y1], Wall): continue
+                if isinstance(self.board[x1][y1], Bomb): continue
                 if (x1, y1) not in self.graph:
                     self.graph[(x1, y1)] = {}
                 for dx, dy in [(-1, 0), (+1, 0), (0, -1), (0, +1)]:
@@ -22,6 +24,7 @@ class Graph:
                     if not 0 <= x2 < len(self.board): continue
                     if not 0 <= y2 < len(self.board[0]): continue
                     if isinstance(self.board[x2][y2], Wall): continue
+                    if isinstance(self.board[x2][y2], Bomb): continue
                     if (x2, y2) not in self.graph:
                         self.graph[(x2, y2)] = {}
                     # assign weight in both directions
@@ -64,6 +67,8 @@ class Graph:
             while node:
                 path.append(node)
                 node = self.path[node]["previous"]
+            # no path exists
+            path = path if len(path) != 1 else []
             return path
 
         # execute dijkstra

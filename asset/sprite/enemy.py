@@ -21,9 +21,9 @@ class Enemy:
     def path(self):
         g = Graph(self.app.objectBoard)
         if self.app.getRC(self.rect.centerx, self.rect.centery) == (13, 1):
-            self.route = [self.app.getXY(cor[0], cor[1]) for cor in g.Dijkstra(sNode=(13, 1), eNode=(9, 5))]
+            return [self.app.getXY(cor[0], cor[1]) for cor in g.Dijkstra(sNode=(13, 1), eNode=(9, 5))]
         if self.app.getRC(self.rect.centerx, self.rect.centery) == (9, 5):
-            self.route = [self.app.getXY(cor[0], cor[1]) for cor in g.Dijkstra(sNode=(9, 5), eNode=(13, 1))]
+            return [self.app.getXY(cor[0], cor[1]) for cor in g.Dijkstra(sNode=(9, 5), eNode=(13, 1))]
 
     def bomb(self):
         if self.numBomb:
@@ -33,10 +33,16 @@ class Enemy:
             self.numBomb -= 1
 
     def automate(self):
-        if not self.route: self.path()
+        if not self.route:
+            path = self.path()
+            if not path: return
+            self.route = path
+        if self.rect.centerx < self.route[-1][0]:
+            self.rect.move_ip(+1, 0)
+        if self.rect.centerx > self.route[-1][0]:
+            self.rect.move_ip(-1, 0)
+        if self.rect.centery < self.route[-1][1]:
+            self.rect.move_ip(0, +1)
+        if self.rect.centery > self.route[-1][1]:
+            self.rect.move_ip(0, -1)
         if self.rect.center == self.route[-1]: self.route.pop()
-        if not self.route: self.path()
-        if self.rect.centerx < self.route[-1][0]: self.rect.move_ip(+1, 0)
-        if self.rect.centerx > self.route[-1][0]: self.rect.move_ip(-1, 0)
-        if self.rect.centery < self.route[-1][1]: self.rect.move_ip(0, +1)
-        if self.rect.centery > self.route[-1][1]: self.rect.move_ip(0, -1)
