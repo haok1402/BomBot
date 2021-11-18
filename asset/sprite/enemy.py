@@ -4,7 +4,7 @@ from asset.sprite.bomb import Bomb
 from asset.sprite.explosion import Explosion
 from asset.genius.dijkstra import Graph
 
-ENEMY_IMG = pygame.transform.scale(pygame.image.load("./asset/image/robot-2.png").convert_alpha(), (68, 68))
+ENEMY_IMG = pygame.transform.scale(pygame.image.load("./asset/image/robot-2.png").convert_alpha(), (70, 70))
 
 
 class Enemy:
@@ -39,19 +39,23 @@ class Enemy:
             self.route = path
         r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
         if self.rect.centerx < self.route[-1][0]:
-            self.rect.move_ip(+self.velocity, 0)  # move down
-            collision = self.app.detectCollision(self, self.app.objectBoard[r + 1][c])
-            if collision and not isinstance(collision, Explosion): self.rect.move_ip(0, -self.velocity)
+            self.rect.move_ip(+self.velocity, 0)
+            other = self.app.objectBoard[r][c + 1]
+            if not other or isinstance(other, Explosion): return
+            if pygame.sprite.collide_rect(self, other): self.rect.move_ip(-self.velocity, 0)
         if self.rect.centerx > self.route[-1][0]:
-            self.rect.move_ip(-self.velocity, 0)  # move up
-            collision = self.app.detectCollision(self, self.app.objectBoard[r - 1][c])
-            if collision and not isinstance(collision, Explosion): self.rect.move_ip(0, +self.velocity)
+            self.rect.move_ip(-self.velocity, 0)
+            other = self.app.objectBoard[r][c - 1]
+            if not other or isinstance(other, Explosion): return
+            if pygame.sprite.collide_rect(self, other): self.rect.move_ip(+self.velocity, 0)
         if self.rect.centery < self.route[-1][1]:
-            self.rect.move_ip(0, +self.velocity)  # move right
-            collision = self.app.detectCollision(self, self.app.objectBoard[r][c + 1])
-            if collision and not isinstance(collision, Explosion): self.rect.move_ip(-self.velocity, 0)
+            self.rect.move_ip(0, +self.velocity)
+            other = self.app.objectBoard[r + 1][c]
+            if not other or isinstance(other, Explosion): return
+            if pygame.sprite.collide_rect(self, other): self.rect.move_ip(0, -self.velocity)
         if self.rect.centery > self.route[-1][1]:
-            self.rect.move_ip(0, -self.velocity)  # move left
-            collision = self.app.detectCollision(self, self.app.objectBoard[r][c - 1])
-            if collision and not isinstance(collision, Explosion): self.rect.move_ip(+self.velocity, 0)
+            self.rect.move_ip(0, -self.velocity)
+            other = self.app.objectBoard[r - 1][c]
+            if not other or isinstance(other, Explosion): return
+            if pygame.sprite.collide_rect(self, other): self.rect.move_ip(0, +self.velocity)
         if self.rect.center == self.route[-1]: self.route.pop()

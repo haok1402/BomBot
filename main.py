@@ -76,20 +76,8 @@ class App:
         return x, y
 
     def detectCollision(self, object01, object02):
-        if not (object01 and object02): return None
-        # capture (x, y) for object01 and object02
-        (x1, y1), (x2, y2) = object01.rect.topleft, object01.rect.bottomright
-        (x3, y3), (x4, y4) = object02.rect.topleft, object02.rect.bottomright
-        # object02 collides object01 from bottom-right
-        if (x1 <= x3 <= x2) and (y1 <= y3 <= y2): return object02
-        # object02 collides object01 from bottom-left
-        if (x1 <= x4 <= x2) and (y1 <= y3 <= y2): return object02
-        # object02 collides object01 from top-right
-        if (x1 <= x3 <= x2) and (y1 <= y4 <= y2): return object02
-        # object02 collides object01 from top-left
-        if (x1 <= x4 <= x2) and (y1 <= y4 <= y2): return object02
-        # no collision detected
-        return None
+        if not object02 or isinstance(object02, Explosion): return False
+        return pygame.sprite.collide_rect(object01, object02)
 
     def update(self):
         if self.robot.isAlive:
