@@ -1,3 +1,8 @@
+"""
+CITATION:
+With explanation of Dijkstra's Algorithm (https://www.youtube.com/watch?v=pVfj6mxhdMw), I created the following.
+"""
+
 from asset.sprite.wall import Wall
 from asset.sprite.brick import Brick
 from asset.sprite.bomb import Bomb
@@ -69,14 +74,15 @@ class Graph:
                 node = self.path[node]["previous"]
             # no path exists
             path = path if len(path) != 1 else []
+            if path: path.pop()
             return path
 
         if not self.status:
             # initialize dijkstra
-            self.path[sNode]["distance"] = 0
             for key in self.graph:
                 self.path[key] = {"distance": float("inf"), "previous": None}
                 self.unvisited.add(key)
+            self.path[sNode]["distance"] = 0
             # execute dijkstra
             while self.unvisited: UpdatePath()
             self.status = True

@@ -1,3 +1,8 @@
+"""
+CITATION:
+With explanation of Dijkstra's Algorithm (https://www.youtube.com/watch?v=pVfj6mxhdMw), I created the following.
+"""
+
 class Graph:
     def __init__(self, board):
         self.board = board

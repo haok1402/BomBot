@@ -42,6 +42,12 @@ class App:
                 yield r, c, self.positionBoard[r][c], self.objectBoard[r][c]
 
     def generateBoard(self):
+        # generate space Robot
+        robotSpace = {(1, 1), (1, 2), (2, 1),
+                      (13, 1), (12, 1), (13, 2),
+                      (1, 19), (2, 19), (1, 18),
+                      (13, 19), (12, 19), (13, 18)}
+        for i in range(1, 14): robotSpace.add((i, 1))
         for r, c, pos, obj in self:
             # generate randomized Brick
             num = random.random()
@@ -51,11 +57,6 @@ class App:
             # generate boundary Wall
             if r == 0 or r == self.numRow - 1: self.objectBoard[r][c] = Wall(self, pos)
             if c == 0 or c == self.numCol - 1: self.objectBoard[r][c] = Wall(self, pos)
-            # generate space Robot
-            robotSpace = {(1, 1), (1, 2), (2, 1),
-                          (13, 1), (12, 1), (13, 2),
-                          (1, 19), (2, 19), (1, 18),
-                          (13, 19), (12, 19), (13, 18)}
             if (r, c) in robotSpace: self.objectBoard[r][c] = None
 
     def getRC(self, x: int, y: int) -> tuple:
@@ -74,11 +75,11 @@ class App:
         if self.robot.isAlive:
             self.robot.move()
             self.robot.bomb()
+            for enemy in self.enemy:
+                enemy.automate()
             for r, c, pos, obj in self:
                 if isinstance(obj, Bomb): obj.detonate()
                 if isinstance(obj, Explosion): obj.burn()
-        for enemy in self.enemy:
-            enemy.automate()
 
     def draw(self):
         self.canvas.blit(self.floor.image, self.floor.rect)
@@ -88,7 +89,8 @@ class App:
             self.canvas.blit(enemy.image, enemy.rect)
             if not enemy.isAlive: self.enemy.remove(enemy)
         self.canvas.blit(self.robot.image, self.robot.rect)
-        if not self.robot.isAlive: self.canvas.blit(self.over.image, self.over.rect)
+        if not self.robot.isAlive:
+            self.canvas.blit(self.over.image, self.over.rect)
         pygame.display.flip()
 
 

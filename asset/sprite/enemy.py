@@ -20,6 +20,7 @@ class Enemy:
         self.velocity = 1
         self.route = []
         self.adjacentBomb = []
+        self.awaitingTime = 0
 
     def path(self):
         g = Graph(self.app.objectBoard, "normal")
@@ -35,37 +36,84 @@ class Enemy:
         bomb = []
         # search Bomb leftward
         for dc in range(-1, -4, -1):
-            if not 0 <= c + dc < len(self.app.objectBoard[0]): continue
+            if not 0 <= c + dc < len(self.app.objectBoard[0]): break
             other = self.app.objectBoard[r][c + dc]
-            if isinstance(other, Brick): continue
-            if isinstance(other, Wall): continue
+            if isinstance(other, Brick): break
+            if isinstance(other, Wall): break
             if isinstance(other, Bomb): bomb.append((r, c + dc))
         # search Bomb rightward
         for dc in range(+1, +4, +1):
-            if not 0 <= c + dc < len(self.app.objectBoard[0]): continue
+            if not 0 <= c + dc < len(self.app.objectBoard[0]): break
             other = self.app.objectBoard[r][c + dc]
-            if isinstance(other, Brick): continue
-            if isinstance(other, Wall): continue
+            if isinstance(other, Brick): break
+            if isinstance(other, Wall): break
             if isinstance(other, Bomb): bomb.append((r, c + dc))
         # search Bomb upward
         for dr in range(-1, -4, -1):
-            if not 0 <= r + dr < len(self.app.objectBoard): continue
+            if not 0 <= r + dr < len(self.app.objectBoard): break
             other = self.app.objectBoard[r + dr][c]
-            if isinstance(other, Brick): continue
-            if isinstance(other, Wall): continue
+            if isinstance(other, Brick): break
+            if isinstance(other, Wall): break
             if isinstance(other, Bomb): bomb.append((r + dr, c))
         # search Bomb downward
         for dr in range(+1, +4, +1):
-            if not 0 <= r + dr < len(self.app.objectBoard): continue
+            if not 0 <= r + dr < len(self.app.objectBoard): break
             other = self.app.objectBoard[r + dr][c]
-            if isinstance(other, Brick): continue
-            if isinstance(other, Wall): continue
+            if isinstance(other, Brick): break
+            if isinstance(other, Wall): break
             if isinstance(other, Bomb): bomb.append((r + dr, c))
+        # assign awaiting time
+        # maxTime = float("-inf")
+        # for r, c in bomb:
+        #     if self.app.objectBoard[r][c].time > maxTime: maxTime = self.app.objectBoard[r][c].time
+        # self.awaitingTime = maxTime
         return bomb
 
     def avoidBomb(self):
+        # clear route
+        self.route = []
         g = Graph(self.app.objectBoard, "survive")
-
+        dangerousZone, safetyZone = set(), set()
+        # update dangerousZone
+        for r, c in self.adjacentBomb:
+            dangerousZone.add((r, c))
+            # Explosion leftward
+            for dc in range(-1, -4, -1):
+                if not 0 <= c + dc < len(self.app.objectBoard[0]): break
+                other = self.app.objectBoard[r][c + dc]
+                if isinstance(other, Brick): break
+                if isinstance(other, Wall): break
+                dangerousZone.add((r, c + dc))
+            # Explosion rightward
+            for dc in range(+1, +4, +1):
+                if not 0 <= c + dc < len(self.app.objectBoard[0]): break
+                other = self.app.objectBoard[r][c + dc]
+                if isinstance(other, Brick): break
+                if isinstance(other, Wall): break
+                dangerousZone.add((r, c + dc))
+            # Explosion upward
+            for dr in range(-1, -4, -1):
+                if not 0 <= r + dr < len(self.app.objectBoard): break
+                other = self.app.objectBoard[r + dr][c]
+                if isinstance(other, Brick): break
+                if isinstance(other, Wall): break
+                dangerousZone.add((r + dr, c))
+            # Explosion downward
+            for dr in range(+1, +4, +1):
+                if not 0 <= r + dr < len(self.app.objectBoard): break
+                other = self.app.objectBoard[r + dr][c]
+                if isinstance(other, Brick): break
+                if isinstance(other, Wall): break
+                dangerousZone.add((r + dr, c))
+        # update safetyZone
+        for r in range(len(self.app.objectBoard)):
+            for c in range(len(self.app.objectBoard[0])):
+                other = self.app.objectBoard[r][c]
+                if not other and other not in dangerousZone: safetyZone.add((r, c))
+        # update route
+        r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
+        while not self.route and safetyZone:
+            self.route = [self.app.getXY(cor[0], cor[1]) for cor in g.Dijkstra(sNode=(r, c), eNode=(safetyZone.pop()))]
 
     def bomb(self):
         if self.numBomb:
