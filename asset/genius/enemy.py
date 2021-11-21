@@ -102,10 +102,14 @@ class Enemy:
                 other = self.app.objectBoard[r][c]
                 if not other and other not in dangerZone: safetyZone.add((r, c))
         # update routeToSafety
+        print("safetyZone:", safetyZone)
         r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
         while not self.routeToSafety and safetyZone:
-            routeToSafety = self.vision.dijkstra(nodeA=(r, c), nodeB=(safetyZone.pop()))
-            if routeToSafety: print(routeToSafety)
+            nodeB = safetyZone.pop()
+            routeToSafety = self.vision.dijkstra(nodeA=(r, c), nodeB=nodeB)
+            if routeToSafety:
+                print("nodeB", nodeB)
+                print("routeToSafety:", routeToSafety)
             self.routeToSafety = [self.app.getXY(cor[0], cor[1]) for cor in routeToSafety]
 
     def automate(self):
@@ -113,7 +117,6 @@ class Enemy:
             if not self.timeToSafety:
                 bombDetected = self.detectBomb()
                 if bombDetected: self.avoidBomb(bombDetected)
-                if self.routeToSafety: print(self.routeToSafety)
         if self.routeToSafety:
             self.move(route=self.routeToSafety)
-            if self.timeToSafety: self.timeToSafety -= 1
+        if self.timeToSafety: self.timeToSafety -= 1
