@@ -1,8 +1,3 @@
-"""
-CITATION:
-With explanation of Dijkstra's Algorithm (https://www.youtube.com/watch?v=pVfj6mxhdMw), I created the following.
-"""
-
 from asset.sprite.wall import Wall
 from asset.sprite.brick import Brick
 from asset.sprite.bomb import Bomb

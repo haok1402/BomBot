@@ -14,7 +14,8 @@ from asset.sprite.bomb import Bomb
 from asset.sprite.explosion import Explosion
 from asset.sprite.over import Over
 from asset.sprite.robot import Robot
-from asset.sprite.enemy import Enemy
+# from asset.sprite.enemy import Enemy
+from asset.genius.enemy import Enemy
 
 
 class App:
@@ -28,7 +29,7 @@ class App:
         self.isGameOver = False
         self.numRow, self.numCol = 15, 21
         self.positionBoard = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
-        self.objectBoard = [[None for c in range(self.numCol)] for _ in range(self.numRow)]
+        self.objectBoard = [[None for _ in range(self.numCol)] for _ in range(self.numRow)]
         self.generateBoard()
         # configure sprite
         self.floor = Floor(self, (310, 15))

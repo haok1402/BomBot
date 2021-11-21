@@ -13,7 +13,7 @@ class Robot(pygame.sprite.Sprite):
         self.image = ROBOT_IMG
         self.rect = self.image.get_rect(center=position)
         self.isAlive = True
-        self.numBomb = 1
+        self.numBomb = 2
         self.numExplosion = 2
         self.velocity = 2
 
