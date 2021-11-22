@@ -23,32 +23,39 @@ class Enemy:
         self.vision.construct(board=self.app.objectBoard, mode="normal")
         self.routeToSafety = []
         self.timeToSafety = 0
-        self.routeToRandom = []
+        self.routeToWander = []
 
-    def move(self, route):
-        if self.rect.center == route[-1]: route.pop(); return
+    def move(self, route: list) -> bool:
+        """
+        move according to route and return if movement is valid or not
+        """
+        if not route: return True
+        if self.rect.center == route[-1]: route.pop(); return True
         r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
         if self.rect.centerx < route[-1][0]:
             self.rect.move_ip(+self.velocity, 0)
             other = self.app.objectBoard[r][c + 1]
-            if not other or isinstance(other, Explosion): return
-            if pygame.sprite.collide_rect(self, other): self.rect.move_ip(-self.velocity, 0); return
+            if not other or isinstance(other, Explosion): return True
+            if pygame.sprite.collide_rect(self, other):
+                self.rect.move_ip(-self.velocity, 0); return False
         if self.rect.centerx > route[-1][0]:
             self.rect.move_ip(-self.velocity, 0)
             other = self.app.objectBoard[r][c - 1]
-            if not other or isinstance(other, Explosion): return
-            if pygame.sprite.collide_rect(self, other): self.rect.move_ip(+self.velocity, 0); return
+            if not other or isinstance(other, Explosion): return True
+            if pygame.sprite.collide_rect(self, other):
+                self.rect.move_ip(+self.velocity, 0); return False
         if self.rect.centery < route[-1][1]:
             self.rect.move_ip(0, +self.velocity)
             other = self.app.objectBoard[r + 1][c]
-            if not other or isinstance(other, Explosion): return
-            if pygame.sprite.collide_rect(self, other): self.rect.move_ip(0, -self.velocity); return
+            if not other or isinstance(other, Explosion): return True
+            if pygame.sprite.collide_rect(self, other):
+                self.rect.move_ip(0, -self.velocity); return False
         if self.rect.centery > route[-1][1]:
             self.rect.move_ip(0, -self.velocity)
             other = self.app.objectBoard[r - 1][c]
-            if not other or isinstance(other, Explosion): return
-            if pygame.sprite.collide_rect(self, other): self.rect.move_ip(0, +self.velocity); return
-
+            if not other or isinstance(other, Explosion): return True
+            if pygame.sprite.collide_rect(self, other):
+                self.rect.move_ip(0, +self.velocity); return False
 
     def detectBomb(self):
         r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
@@ -81,7 +88,13 @@ class Enemy:
             if isinstance(other, Brick): break
             if isinstance(other, Wall): break
             if isinstance(other, Bomb): bombDetected.append(self.app.objectBoard[r + dr][c])
+        # bombDetected = [obj for r, c, pos, obj in self.app if isinstance(obj, Bomb)]
         return bombDetected
+
+    def pathInDanger(self, routeToSafety, dangerZone):
+        for (r, c) in routeToSafety:
+            if (r, c) in dangerZone: return True
+        return False
 
     def avoidBomb(self, bombDetected):
         self.vision.construct(board=self.app.objectBoard, mode="survive")
@@ -95,28 +108,33 @@ class Enemy:
                 if explosion not in dangerZone:
                     dangerZone.add(explosion)
         # find time remaining until explosion
-        self.timeToSafety = timeToSafety
+        self.timeToSafety = timeToSafety + 250
         # safetyZone: 1) it's free to go; 2) it's outside dangerZone
         for r in range(len(self.app.objectBoard)):
             for c in range(len(self.app.objectBoard[0])):
                 other = self.app.objectBoard[r][c]
                 if not other and other not in dangerZone: safetyZone.add((r, c))
         # update routeToSafety
-        print("safetyZone:", safetyZone)
         r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
-        while not self.routeToSafety and safetyZone:
-            nodeB = safetyZone.pop()
-            routeToSafety = self.vision.dijkstra(nodeA=(r, c), nodeB=nodeB)
-            if routeToSafety:
-                print("nodeB", nodeB)
-                print("routeToSafety:", routeToSafety)
+        self.routeToSafety, routeDanger = [], True
+        while not self.routeToSafety and safetyZone and routeDanger:
+            routeToSafety = self.vision.dijkstra(nodeA=(r, c), nodeB=safetyZone.pop())
             self.routeToSafety = [self.app.getXY(cor[0], cor[1]) for cor in routeToSafety]
+            if routeToSafety: routeDanger = self.pathInDanger(routeToSafety, dangerZone)
 
     def automate(self):
-        if not self.routeToSafety:
-            if not self.timeToSafety:
+        # time remaining for Bomb to explode
+        if self.timeToSafety:
+            self.timeToSafety -= 1
+        # detect adjacent Bomb and plan routeToSafety
+        if not self.routeToSafety and not self.timeToSafety:
+            bombDetected = self.detectBomb()
+            if bombDetected: self.avoidBomb(bombDetected)
+        # move according to routeToSafety
+        if self.routeToSafety:
+            # if movement is invalid (reschedule route)
+            validMove = self.move(route=self.routeToSafety)
+            if not validMove:
                 bombDetected = self.detectBomb()
                 if bombDetected: self.avoidBomb(bombDetected)
-        if self.routeToSafety:
-            self.move(route=self.routeToSafety)
-        if self.timeToSafety: self.timeToSafety -= 1
+                self.move(route=self.routeToSafety)

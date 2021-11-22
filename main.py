@@ -14,7 +14,6 @@ from asset.sprite.bomb import Bomb
 from asset.sprite.explosion import Explosion
 from asset.sprite.over import Over
 from asset.sprite.robot import Robot
-# from asset.sprite.enemy import Enemy
 from asset.genius.enemy import Enemy
 
 
