@@ -8,6 +8,9 @@ from asset.sprite.brick import Brick
 from asset.sprite.bomb import Bomb
 from asset.sprite.explosion import Explosion
 from asset.genius.engine import Engine
+from asset.sprite.shoe import Shoe
+from asset.sprite.potion import Potion
+from asset.sprite.lightening import Lightening
 
 ENEMY_IMG = pygame.transform.scale(pygame.image.load("./asset/image/robot-2.png").convert_alpha(), (70, 70))
 
@@ -18,6 +21,8 @@ class Enemy:
         self.image = ENEMY_IMG
         self.rect = self.image.get_rect(center=position)
         self.isAlive = True
+        self.numBomb = 1
+        self.numExplosion = 1
         self.velocity = 1
         self.vision = Engine()
         self.vision.construct(board=self.app.objectBoard, mode="normal")
@@ -35,24 +40,72 @@ class Enemy:
         if self.rect.centerx < route[-1][0]:
             self.rect.move_ip(+self.velocity, 0)
             other = self.app.objectBoard[r][c + 1]
+            if isinstance(other, Shoe):
+                self.velocity += 0.5
+                self.app.objectBoard[r][c + 1] = None
+                return
+            if isinstance(other, Potion):
+                self.numExplosion += 1
+                self.app.objectBoard[r][c + 1] = None
+                return
+            if isinstance(other, Lightening):
+                self.numBomb += 1
+                self.app.objectBoard[r][c + 1] = None
+                return
             if not other or isinstance(other, Explosion): return True
             if pygame.sprite.collide_rect(self, other):
                 self.rect.move_ip(-self.velocity, 0); return False
         if self.rect.centerx > route[-1][0]:
             self.rect.move_ip(-self.velocity, 0)
             other = self.app.objectBoard[r][c - 1]
+            if isinstance(other, Shoe):
+                self.velocity += 0.5
+                self.app.objectBoard[r][c - 1] = None
+                return
+            if isinstance(other, Potion):
+                self.numExplosion += 1
+                self.app.objectBoard[r][c - 1] = None
+                return
+            if isinstance(other, Lightening):
+                self.numBomb += 1
+                self.app.objectBoard[r][c - 1] = None
+                return
             if not other or isinstance(other, Explosion): return True
             if pygame.sprite.collide_rect(self, other):
                 self.rect.move_ip(+self.velocity, 0); return False
         if self.rect.centery < route[-1][1]:
             self.rect.move_ip(0, +self.velocity)
             other = self.app.objectBoard[r + 1][c]
+            if isinstance(other, Shoe):
+                self.velocity += 0.5
+                self.app.objectBoard[r + 1][c] = None
+                return
+            if isinstance(other, Potion):
+                self.numExplosion += 1
+                self.app.objectBoard[r + 1][c] = None
+                return
+            if isinstance(other, Lightening):
+                self.numBomb += 1
+                self.app.objectBoard[r + 1][c] = None
+                return
             if not other or isinstance(other, Explosion): return True
             if pygame.sprite.collide_rect(self, other):
                 self.rect.move_ip(0, -self.velocity); return False
         if self.rect.centery > route[-1][1]:
             self.rect.move_ip(0, -self.velocity)
             other = self.app.objectBoard[r - 1][c]
+            if isinstance(other, Shoe):
+                self.velocity += 0.5
+                self.app.objectBoard[r - 1][c] = None
+                return
+            if isinstance(other, Potion):
+                self.numExplosion += 1
+                self.app.objectBoard[r - 1][c] = None
+                return
+            if isinstance(other, Lightening):
+                self.numBomb += 1
+                self.app.objectBoard[r - 1][c] = None
+                return
             if not other or isinstance(other, Explosion): return True
             if pygame.sprite.collide_rect(self, other):
                 self.rect.move_ip(0, +self.velocity); return False

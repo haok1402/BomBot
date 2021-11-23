@@ -116,6 +116,12 @@ Below is a list containing all controls used in BomBot.
 - Brick
   - I have used the  image below and modified its properties
   - https://www.pinterest.com/pin/427701295834480905/
+- Shoe
+  - I have used the  image below and modified its properties
+  - https://stickersnorthwest.com/collections/lifestyle/products/running-shoe
+- Potion
+  - I have used the  image below and modified its properties
+  - https://dribbble.com/shots/3037831-Magic-Potion
 
 **Algorithm**:
 

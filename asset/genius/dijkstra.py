@@ -1,4 +1,3 @@
-# I use https://www.youtube.com/watch?v=pVfj6mxhdMw to understand how dijkstra works
 from asset.sprite.wall import Wall
 from asset.sprite.brick import Brick
 from asset.sprite.bomb import Bomb

@@ -1,8 +1,12 @@
 import pygame
+import random
 
 from asset.sprite.wall import Wall
 from asset.sprite.brick import Brick
 from asset.sprite.explosion import Explosion
+from asset.sprite.shoe import Shoe
+from asset.sprite.potion import Potion
+from asset.sprite.lightening import Lightening
 
 BOMB_IMG = pygame.transform.scale(pygame.image.load("./asset/image/bomb.png").convert_alpha(), (70, 70))
 
@@ -56,6 +60,11 @@ class Bomb:
         if not self.time:
             explosionZone = self.explode()
             for (r, c) in explosionZone:
-                self.app.objectBoard[r][c] = Explosion(self.app, self.app.getXY(r, c))
-            return None
-        self.time -= 1
+                if isinstance(self.app.objectBoard[r][c], Brick):
+                    randomNum, randomPowerup = random.random(), None
+                    if 0 < randomNum <= 0.15: randomPowerup = Shoe(self.app, self.app.getXY(r, c))
+                    if 0.15 < randomNum <= 0.30: randomPowerup = Potion(self.app, self.app.getXY(r, c))
+                    if 0.30 < randomNum <= 0.45: randomPowerup = Lightening(self.app, self.app.getXY(r, c))
+                    self.app.objectBoard[r][c] = Explosion(self.app, self.app.getXY(r, c), randomPowerup)
+                else: self.app.objectBoard[r][c] = Explosion(self.app, self.app.getXY(r, c), None)
+        if self.time: self.time -= 1

@@ -4,16 +4,17 @@ EXPLOSION_IMG = pygame.transform.scale(pygame.image.load("./asset/image/explosio
 
 
 class Explosion:
-    def __init__(self, app, position):
+    def __init__(self, app, position, product):
         self.app = app
         self.image = EXPLOSION_IMG
         self.rect = self.image.get_rect(center=position)
+        self.product = product
         self.time = 250
 
     def burn(self):
         if not self.time:
             r, c = self.app.getRC(self.rect.centerx, self.rect.centery)
-            self.app.objectBoard[r][c] = None
+            self.app.objectBoard[r][c] = self.product
             return None
         # kill robot if explosion hits
         cx, cy = self.app.robot.rect.center

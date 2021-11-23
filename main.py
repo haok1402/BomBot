@@ -47,11 +47,10 @@ class App:
                       (13, 1), (12, 1), (13, 2),
                       (1, 19), (2, 19), (1, 18),
                       (13, 19), (12, 19), (13, 18)}
-        for i in range(1, 14): robotSpace.add((i, 1))
         for r, c, pos, obj in self:
             # generate randomized Brick
             num = random.random()
-            if 0.0 <= num < 0.4: self.objectBoard[r][c] = None
+            if 0.0 <= num < 0.3: self.objectBoard[r][c] = None
             if 0.5 <= num < 0.8: self.objectBoard[r][c] = Brick(self, pos)
             if 0.8 <= num < 1.0: self.objectBoard[r][c] = Wall(self, pos)
             # generate boundary Wall
