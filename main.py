@@ -19,7 +19,9 @@ from asset.sprite.explosion import Explosion
 from asset.sprite.over import Over
 from asset.sprite.robot import Robot
 from asset.genius.enemy import Enemy
-
+from asset.sprite.potion import Potion
+from asset.sprite.shoe import Shoe
+from asset.sprite.lightening import Lightening
 
 class App:
     def __init__(self, game_mode):
@@ -66,7 +68,7 @@ class App:
             # randomized brick
             ranNum = random.random()
             if 0.0 <= ranNum < 0.3: self.objectBoard[r][c] = None
-            if 0.5 <= ranNum < 0.8: self.objectBoard[r][c] = Brick(self, pos)
+            if 0.4 <= ranNum < 0.8: self.objectBoard[r][c] = Brick(self, pos)
             if 0.8 <= ranNum < 1.0: self.objectBoard[r][c] = Wall(self, pos)
             # boundary wall
             if r == 0 or r == self.numRow - 1: self.objectBoard[r][c] = Wall(self, pos)
@@ -113,6 +115,13 @@ class App:
         for r, c, pos, obj in self:
             if not obj:
                 self.emptyZone.add((r, c))
+            if isinstance(obj, Potion):
+                self.emptyZone.add((r, c))
+            if isinstance(obj, Shoe):
+                self.emptyZone.add((r, c))
+            if isinstance(obj, Lightening):
+                self.emptyZone.add((r, c))
+
 
     def detectCollision(self, object01, object02):
         if not object02 or isinstance(object02, Explosion): return False
