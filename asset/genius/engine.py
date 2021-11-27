@@ -9,25 +9,19 @@ class Engine:
         self.path = dict()
         self.nodeA = None
 
-    def construct(self, board, mode):
+    def construct(self, board, exclude):
         self.graph = dict()
         # construct (x1, y1)
         for x1 in range(len(board)):
             for y1 in range(len(board[0])):
-                # in survive mode, construct (None) to graph
-                if mode == "survive" and board[x1][y1]: continue
-                # in normal mode, construct (None & Brick) to graph
-                if isinstance(board[x1][y1], Wall): continue
-                if isinstance(board[x1][y1], Bomb): continue
+                if (x1, y1) in exclude: continue
                 if (x1, y1) not in self.graph: self.graph[(x1, y1)] = dict()
                 # construct (x2, y2)
                 for (dx, dy) in [(-1, 0), (+1, 0), (0, -1), (0, +1)]:
                     x2, y2 = x1 + dx, y1 + dy
                     if not 0 <= x2 < len(board): continue
                     if not 0 <= y2 < len(board[0]): continue
-                    if mode == "survive" and board[x2][y2]: continue
-                    if isinstance(board[x2][y2], Wall): continue
-                    if isinstance(board[x2][y2], Bomb): continue
+                    if (x2, y2) in exclude: continue
                     if (x2, y2) not in self.graph: self.graph[(x2, y2)] = dict()
                     # assign weight
                     if not board[x1][y1]: self.graph[(x2, y2)][(x1, y1)] = 0
@@ -35,7 +29,6 @@ class Engine:
                     if isinstance(board[x1][y1], Brick): self.graph[(x2, y2)][(x1, y1)] = 500
                     if isinstance(board[x2][y2], Brick): self.graph[(x1, y1)][(x2, y2)] = 500
 
-    # I use https://www.youtube.com/watch?v=pVfj6mxhdMw to understand dijkstra
     def dijkstra(self, nodeA, nodeB):
 
         def nextNode():

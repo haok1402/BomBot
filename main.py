@@ -1,7 +1,6 @@
 # import external dependencies
 import pygame
 import random
-import time
 
 # initialize pygame
 pygame.init()
@@ -32,6 +31,15 @@ class App:
         self.positionBoard = [[(c + 35, r + 35) for c in range(310, 1780, 70)] for r in range(15, 1065, 70)]
         self.objectBoard = [[None for _ in range(self.numCol)] for _ in range(self.numRow)]
         self.board = self.generate_board()
+        # AI Engine
+        self.dangerZone = set()
+        self.getDangerZone()
+        self.brickZone = set()
+        self.getBrickZone()
+        self.wallZone = set()
+        self.getWallZone()
+        self.emptyZone = set()
+        self.getEmptyZone()
         # configure sprite
         self.floor = Floor(self, (310, 15))
         self.over = Over(self, position=(1045, 540))
@@ -80,6 +88,32 @@ class App:
         x, y = self.positionBoard[r][c]
         return x, y
 
+    def getDangerZone(self):
+        self.dangerZone = set()
+        for r, c, pos, obj in self:
+            if isinstance(obj, Bomb):
+                self.dangerZone = self.dangerZone | obj.explode()
+            if isinstance(obj, Explosion):
+                self.dangerZone.add((r, c))
+
+    def getBrickZone(self):
+        self.brickZone = set()
+        for r, c, pos, obj in self:
+            if isinstance(obj, Brick):
+                self.brickZone.add((r, c))
+
+    def getWallZone(self):
+        self.wallZone = set()
+        for r, c, pos, obj in self:
+            if isinstance(obj, Wall):
+                self.wallZone.add((r, c))
+
+    def getEmptyZone(self):
+        self.emptyZone = set()
+        for r, c, pos, obj in self:
+            if not obj:
+                self.emptyZone.add((r, c))
+
     def detectCollision(self, object01, object02):
         if not object02 or isinstance(object02, Explosion): return False
         return pygame.sprite.collide_rect(object01, object02)
@@ -97,13 +131,18 @@ class App:
             for r, c, pos, obj in self:
                 if isinstance(obj, Bomb): obj.detonate()
                 if isinstance(obj, Explosion): obj.burn()
+            # AI Engine
+            self.getDangerZone()
+            self.getBrickZone()
+            self.getEmptyZone()
+            self.getWallZone()
 
     def draw(self) -> None:
         self.isGameOver = self.check_status()
         if not self.isGameOver:
             self.canvas.blit(self.floor.image, self.floor.rect)
             for r, c, pos, obj in self:
-                if obj: self.canvas.blit(obj.image, obj.rect)
+                 if obj: self.canvas.blit(obj.image, obj.rect)
             for enemy in self.enemy:
                 self.canvas.blit(enemy.image, enemy.rect)
                 if not enemy.isAlive: self.enemy.remove(enemy)
