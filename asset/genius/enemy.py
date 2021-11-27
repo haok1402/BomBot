@@ -12,13 +12,11 @@ from asset.sprite.shoe import Shoe
 from asset.sprite.potion import Potion
 from asset.sprite.lightening import Lightening
 
-ENEMY_IMG = pygame.transform.scale(pygame.image.load("./asset/image/robot-2.png").convert_alpha(), (70, 70))
-
 
 class Enemy:
-    def __init__(self, app, position):
+    def __init__(self, app, position, color):
         self.app = app
-        self.image = ENEMY_IMG
+        self.image = pygame.transform.scale(pygame.image.load(f"./asset/image/robot-{color}.png").convert_alpha(), (70, 70))
         self.rect = self.image.get_rect(center=position)
         self.isAlive = True
         self.numBomb = 1

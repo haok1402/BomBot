@@ -17,9 +17,10 @@ class Explosion:
             self.app.objectBoard[r][c] = self.product
             return None
         # kill robot if explosion hits
-        cx, cy = self.app.robot.rect.center
-        if (self.rect.left <= cx <= self.rect.right) and (self.rect.top <= cy <= self.rect.bottom):
-            self.app.robot.isAlive = False
+        for robot in self.app.robot:
+            cx, cy = robot.rect.center
+            if (self.rect.left <= cx <= self.rect.right) and (self.rect.top <= cy <= self.rect.bottom):
+                robot.isAlive = False
         for enemy in self.app.enemy:
             ex, ey = enemy.rect.center
             if (self.rect.left <= ex <= self.rect.right) and (self.rect.top <= ey <= self.rect.bottom):

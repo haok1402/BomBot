@@ -95,6 +95,10 @@ Below is a list containing all controls used in BomBot.
 - if a bomb is placed at where the Enemy is located, Enemy stuck there
 - Enemy cannot perform random movements around the place
 
+**Bomb**
+
+- Sometimes, numBomb doesn't reload
+
 
 
 ### Citation
@@ -135,5 +139,9 @@ Below is a list containing all controls used in BomBot.
 **Code Snippet:**
 
 - Not-Destructively Retrieve Element from a Set
-  - I have incorporated code from the following answer into BomBot
+  - I have incorporated code snippet from the following answer into BomBot
   - https://stackoverflow.com/a/59841/17254508
+- Create Menu in Pygame
+  - I have incorporated code snippet from the following tutorial into BomBot 
+  - https://www.sourcecodester.com/tutorials/python/11784/python-pygame-simple-main-menu-selection.html
+
