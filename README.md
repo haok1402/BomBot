@@ -7,28 +7,28 @@
 
 
 
-### Commands
+## Commands
 
-#### Movement
+### Movement
 
 - Use AWSD to move robot around (First Player)
 - Use ARROW to move robot around (Second Player)
 
-#### Bomb
+### Bomb
 
 - Use SPACE to place bomb (First Player)
 - Use ENTER to place bomb (Second Player)
 
 
 
-### Issues
+## Issues
 
-#### Board
+### Board
 
   - by chance, large amount of bricks in one location
   - by chance, robot is isolated by wall from rest of the map
 
-#### Enemy
+### Enemy
 
 - ~~if a bomb is placed at where the Enemy is located, Enemy stuck there~~
 - ~~Enemy cannot perform random movements around the place~~
@@ -39,9 +39,9 @@
 
 
 
-### Citations
+## Citations
 
-#### Images
+### Images
 
 - Robot
   - I have used the  image below and modified its properties
@@ -68,13 +68,13 @@
   - I have used the  image below and modified its properties
   - https://www.pinterest.co.uk/pin/258394097341915515/
 
-#### Algorithms
+### Algorithms
 
 - Dijkstra's Algorithm:
   - I have used the video below to understand how Dijkstra's Algorithm works
   - https://www.youtube.com/watch?v=pVfj6mxhdMw
 
-#### Code Snippets
+### Code Snippets
 
 - Not-Destructively Retrieve Element from a Set
   - I have incorporated code snippet from the following answer into BomBot
