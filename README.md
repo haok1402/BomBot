@@ -1,7 +1,7 @@
 # BomBot
 
 - Term Project for 15-112 (F21) at CMU
-- Try to bomb enemies on the map and survive from their bombs. Good luck!
+- Try to bomb enemies and survive from their bombs. Good luck!
 
 ![Preview](./asset/image/preview.png)
 
