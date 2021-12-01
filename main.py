@@ -23,6 +23,7 @@ from asset.sprite.potion import Potion
 from asset.sprite.shoe import Shoe
 from asset.sprite.lightening import Lightening
 
+
 class App:
     def __init__(self, game_mode):
         self.game_mode = game_mode
@@ -45,6 +46,7 @@ class App:
         # configure sprite
         self.floor = Floor(self, (310, 15))
         self.over = Over(self, position=(1045, 540))
+        # configure mode
         if self.game_mode == "one_player":
             self.robot = [Robot(self, self.positionBoard[1][1], 1)]
             self.enemy = [Enemy(self, self.positionBoard[13][1], 2),
@@ -122,7 +124,6 @@ class App:
             if isinstance(obj, Lightening):
                 self.emptyZone.add((r, c))
 
-
     def detectCollision(self, object01, object02):
         if not object02 or isinstance(object02, Explosion): return False
         return pygame.sprite.collide_rect(object01, object02)
@@ -151,7 +152,7 @@ class App:
         if not self.isGameOver:
             self.canvas.blit(self.floor.image, self.floor.rect)
             for r, c, pos, obj in self:
-                 if obj: self.canvas.blit(obj.image, obj.rect)
+                if obj: self.canvas.blit(obj.image, obj.rect)
             for enemy in self.enemy:
                 self.canvas.blit(enemy.image, enemy.rect)
                 if not enemy.isAlive: self.enemy.remove(enemy)
