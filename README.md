@@ -7,6 +7,19 @@
 
 
 
+## Run
+
+### Dependency
+
+- Python 3.x
+- PyGame (if not, run `pip install pygame` from terminal before preceding)
+
+### How
+
+- Run `python3 main.py` from terminal inside project directory
+
+
+
 ## Commands
 
 ### Movement
@@ -18,24 +31,6 @@
 
 - Use SPACE to place bomb (First Player)
 - Use ENTER to place bomb (Second Player)
-
-
-
-## Issues
-
-### Board
-
-  - by chance, large amount of bricks in one location
-  - by chance, robot is isolated by wall from rest of the map
-
-### Enemy
-
-- ~~if a bomb is placed at where the Enemy is located, Enemy stuck there~~
-- ~~Enemy cannot perform random movements around the place~~
-
-#### Bomb
-
-- ~~Sometimes, numBomb doesn't reload~~
 
 
 
